@@ -389,7 +389,13 @@
             font-size: 1.6rem;
             font-weight: 900;
             line-height: 1.4;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .result-subtitle {
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
         }
         .result-rating {
             display: inline-block;
@@ -419,6 +425,7 @@
             border-radius: 12px;
             border-left: 2px solid var(--red);
             margin-bottom: 2rem;
+            white-space: pre-line;
         }
         .result-quote {
             font-family: 'Noto Serif SC', serif;
@@ -634,6 +641,7 @@
             <div class="result-badge" id="result-badge"></div>
             <div class="result-icon" id="result-icon"></div>
             <h2 class="result-title" id="result-title"></h2>
+            <div class="result-subtitle" id="result-subtitle"></div>
             <div class="result-rating" id="result-rating">
                 <div class="result-rating-label">适配指数</div>
                 <div class="result-rating-stars" id="result-stars"></div>
@@ -657,181 +665,229 @@
 
     <script>
         // ===== DATA =====
+        // 10 scores: [1-法制咖, 2-求佛者, 3-摄影师08, 4-双标侠, 5-PPT之神, 6-钢琴王子, 7-学霸人设, 8-顶流幸存者, 9-哑巴新郎, 10-为爱退圈]
+        // 2 hidden: K-爆料体质, L-朝阳群众
+
         const questions = [
             {
                 question: "周末约会，他提议去哪里？",
                 options: [
-                    { letter: "A", main: "私人影院", desc: "说\"人少安静\"", score: [1, 0, 0, 0, 0] },
-                    { letter: "B", main: "网吧开黑", desc: "说\"带你上分\"", score: [0, 0, 0, 0, 1] },
-                    { letter: "C", main: "KTV包房", desc: "说\"给你唱我写的歌\"", score: [0, 0, 0, 1, 0] },
-                    { letter: "D", main: "家里做饭", desc: "说\"我厨艺很好\"", score: [0, 1, 0, 0, 0] }
+                    { letter: "A", main: "私人影院", desc: "说\"人少安静\"", score: [1,0,1,0,0,0,0,0,0,0] },
+                    { letter: "B", main: "寺庙烧香", desc: "说\"最近需要祈福\"", score: [0,1,0,0,0,0,0,0,0,0] },
+                    { letter: "C", main: "音乐厅", desc: "说\"带你听肖邦\"", score: [0,0,0,0,0,1,0,0,0,0] },
+                    { letter: "D", main: "家里打游戏", desc: "说\"带你上分\"", score: [0,0,0,0,0,0,0,0,1,0] }
                 ]
             },
             {
                 question: "他手机坏了，第一反应是？",
                 options: [
-                    { letter: "A", main: "自己修", desc: "修不好就扔", score: [0, 0, 0, 0, 1] },
-                    { letter: "B", main: "找街边小店", desc: "越快越好", score: [0, 0, 1, 0, 0] },
-                    { letter: "C", main: "找官方售后", desc: "安全第一", score: [0, 1, 0, 0, 0] },
-                    { letter: "D", main: "发微博吐槽", desc: "品牌方快看", score: [1, 0, 0, 0, 0] }
+                    { letter: "A", main: "发微博吐槽", desc: "让品牌方看到", score: [0,0,0,1,0,0,0,0,0,0] },
+                    { letter: "B", main: "找人肉骂他的人", desc: "连对方老婆都不放过", score: [0,0,0,1,0,0,0,0,0,0] },
+                    { letter: "C", main: "去便利店买个新的", desc: "简单粗暴", score: [0,0,0,0,0,0,1,0,0,0] },
+                    { letter: "D", main: "假装没坏", desc: "反正也不怎么看手机", score: [0,0,0,0,0,0,0,0,1,0] }
                 ]
             },
             {
                 question: "他发了一条朋友圈\"今晚有约\"，配图是？",
                 options: [
-                    { letter: "A", main: "一杯红酒+昏暗灯光", desc: "", score: [1, 0, 0, 0, 0] },
-                    { letter: "B", main: "游戏战绩截图", desc: "", score: [0, 0, 0, 0, 1] },
-                    { letter: "C", main: "钢琴键盘一角", desc: "", score: [0, 0, 0, 1, 0] },
-                    { letter: "D", main: "自拍，但只露眼睛", desc: "", score: [0, 1, 0, 0, 0] }
+                    { letter: "A", main: "一杯红酒+昏暗灯光", desc: "", score: [1,0,1,0,0,0,0,0,0,0] },
+                    { letter: "B", main: "一张PPT截图", desc: "标题是\"我们的回忆\"", score: [0,0,0,0,1,0,0,0,0,0] },
+                    { letter: "C", main: "钢琴键盘一角", desc: "", score: [0,0,0,0,0,1,0,0,0,0] },
+                    { letter: "D", main: "和女朋友的合照", desc: "毫不掩饰", score: [0,0,0,0,0,0,0,1,0,1] }
                 ]
             },
             {
                 question: "吵架后他怎么道歉？",
                 options: [
-                    { letter: "A", main: "写小作文", desc: "声情并茂", score: [1, 0, 0, 0, 0] },
-                    { letter: "B", main: "做个PPT", desc: "逐条分析", score: [0, 0, 1, 0, 0] },
-                    { letter: "C", main: "直接转账5200", desc: "行动派", score: [0, 0, 0, 0, 1] },
-                    { letter: "D", main: "假装没发生", desc: "第二天正常说话", score: [0, 1, 0, 0, 0] }
+                    { letter: "A", main: "写小作文", desc: "声情并茂但没啥诚意", score: [0,0,0,1,0,0,0,0,0,0] },
+                    { letter: "B", main: "做个PPT", desc: "逐条分析图文并茂", score: [0,0,0,0,1,0,0,0,0,0] },
+                    { letter: "C", main: "沉默", desc: "一句话不说", score: [0,0,0,0,0,0,0,0,1,0] },
+                    { letter: "D", main: "公开道歉", desc: "微博置顶，大方承认", score: [0,0,0,1,0,0,0,1,0,0] }
                 ]
             },
             {
                 question: "他突然说\"我想消失一段时间\"，你觉得是？",
                 options: [
-                    { letter: "A", main: "要进组拍戏了", desc: "", score: [0, 0, 0, 0, 1] },
-                    { letter: "B", main: "要去深造学习", desc: "", score: [0, 0, 0, 1, 0] },
-                    { letter: "C", main: "可能要出事了", desc: "", score: [1, 0, 0, 0, 0] },
-                    { letter: "D", main: "准备给我惊喜", desc: "", score: [0, 1, 0, 0, 0] }
+                    { letter: "A", main: "要被带走调查了", desc: "", score: [1,1,0,0,0,1,0,0,0,0] },
+                    { letter: "B", main: "要去古庙修行", desc: "", score: [0,1,0,0,0,0,0,0,0,0] },
+                    { letter: "C", main: "要退圈了", desc: "为了爱情", score: [0,0,0,0,0,0,0,0,0,1] },
+                    { letter: "D", main: "要出国巡演", desc: "", score: [0,0,0,0,0,1,0,0,0,0] }
                 ]
             },
             {
                 question: "他最喜欢收藏什么？",
                 options: [
-                    { letter: "A", main: "限量版球鞋", desc: "", score: [1, 0, 0, 0, 0] },
-                    { letter: "B", main: "各种相机", desc: "", score: [0, 1, 0, 0, 0] },
-                    { letter: "C", main: "钢琴谱手稿", desc: "", score: [0, 0, 0, 1, 0] },
-                    { letter: "D", main: "粉丝写的信", desc: "", score: [0, 0, 0, 0, 1] }
+                    { letter: "A", main: "限量版球鞋+奢侈品", desc: "", score: [1,0,1,1,0,0,0,0,0,0] },
+                    { letter: "B", main: "各种相机", desc: "不同型号都要", score: [0,0,1,0,0,0,0,0,0,0] },
+                    { letter: "C", main: "钢琴谱手稿", desc: "", score: [0,0,0,0,0,1,0,0,0,0] },
+                    { letter: "D", main: "演唱会门票", desc: "每一场都留着", score: [0,0,0,0,1,0,0,0,0,0] }
                 ]
             },
             {
                 question: "半夜三点他给你发消息，内容是？",
                 options: [
-                    { letter: "A", main: "\"睡了吗？\"", desc: "", score: [1, 0, 0, 0, 0] },
-                    { letter: "B", main: "一首他自己唱的歌", desc: "", score: [0, 0, 0, 1, 0] },
-                    { letter: "C", main: "一张今天的自拍", desc: "", score: [0, 1, 0, 0, 0] },
-                    { letter: "D", main: "游戏复活求带", desc: "", score: [0, 0, 0, 0, 1] }
+                    { letter: "A", main: "\"睡了吗？\"过来玩", desc: "", score: [1,0,1,0,0,0,0,0,0,0] },
+                    { letter: "B", main: "一首他自己唱的歌", desc: "", score: [0,0,0,0,1,1,0,0,0,0] },
+                    { letter: "C", main: "一张今天的自拍", desc: "但只露半个脸", score: [0,0,0,1,0,0,0,0,0,0] },
+                    { letter: "D", main: "\"在想你\"三个字", desc: "简单直接", score: [0,0,0,0,0,0,0,1,0,0] }
                 ]
             },
             {
                 question: "他被朋友爆料\"私底下其实很……\"",
                 options: [
-                    { letter: "A", main: "高冷，不爱说话", desc: "", score: [0, 1, 0, 0, 0] },
-                    { letter: "B", main: "爱开玩笑，气氛担当", desc: "", score: [0, 0, 1, 0, 0] },
-                    { letter: "C", main: "爱聊哲学，特别深沉", desc: "", score: [0, 0, 0, 1, 0] },
-                    { letter: "D", main: "爱打游戏，能打一天", desc: "", score: [1, 0, 0, 0, 1] }
+                    { letter: "A", main: "爱选妃，要求还很高", desc: "", score: [1,0,0,0,0,0,0,0,0,0] },
+                    { letter: "B", main: "说话不过脑子", desc: "一张嘴就翻车", score: [0,0,0,0,0,0,1,0,0,0] },
+                    { letter: "C", main: "特别深沉爱聊哲学", desc: "", score: [0,0,0,0,0,1,0,0,0,0] },
+                    { letter: "D", main: "特别暖，但对所有人", desc: "", score: [0,0,0,0,0,0,0,1,0,0] }
                 ]
             },
             {
                 question: "你们第一次约会，他穿的是？",
                 options: [
-                    { letter: "A", main: "全套奢侈品", desc: "恨不得把logo穿身上", score: [1, 0, 0, 0, 0] },
-                    { letter: "B", main: "休闲卫衣", desc: "戴个口罩", score: [0, 1, 0, 0, 0] },
-                    { letter: "C", main: "西装", desc: "像要去演出", score: [0, 0, 0, 1, 0] },
-                    { letter: "D", main: "普通T恤", desc: "看不出牌子", score: [0, 0, 0, 0, 1] }
+                    { letter: "A", main: "全套奢侈品", desc: "恨不得把logo穿身上", score: [1,1,0,1,0,0,0,0,0,0] },
+                    { letter: "B", main: "西装三件套", desc: "像要去开演唱会", score: [0,0,0,0,1,1,0,0,0,0] },
+                    { letter: "C", main: "休闲卫衣", desc: "戴个帽子就出门", score: [0,0,0,0,0,0,1,0,1,0] },
+                    { letter: "D", main: "情侣装", desc: "直接昭告天下", score: [0,0,0,0,0,0,0,1,0,1] }
                 ]
             },
             {
                 question: "他发了一条微博只写\"抱歉\"，你觉得是为什么？",
                 options: [
-                    { letter: "A", main: "鸽了粉丝见面会", desc: "", score: [0, 0, 1, 0, 0] },
-                    { letter: "B", main: "综艺录制出了点问题", desc: "", score: [1, 0, 0, 0, 0] },
-                    { letter: "C", main: "新歌延期了", desc: "", score: [0, 0, 0, 1, 0] },
-                    { letter: "D", main: "不太想说，但应该没事", desc: "", score: [0, 1, 0, 0, 0] }
+                    { letter: "A", main: "进去了", desc: "字少事大", score: [1,1,0,0,0,1,0,0,0,0] },
+                    { letter: "B", main: "又出轨了", desc: "第N次", score: [0,0,0,0,1,0,0,0,0,0] },
+                    { letter: "C", main: "说了不该说的话", desc: "又翻车了", score: [0,0,0,0,0,0,1,0,0,0] },
+                    { letter: "D", main: "退圈声明", desc: "要为爱隐退", score: [0,0,0,0,0,0,0,0,0,1] }
                 ]
             }
         ];
 
-        // scores: [A(夜店), B(摄影), C(PPT), D(艺术), E(网瘾)]
-        // Special: F(全能), G(彩蛋), H(真彩蛋)
-
         const results = {
-            A: {
+            '1': {
                 badge: "命运解锁",
-                icon: "🍷",
-                title: "夜店小王子的进化版",
-                stars: "⭐",
-                ratingDesc: "适配指数：一颗星，因为另一颗在别人手里",
-                description: "你喜欢的是那种在昏暗灯光下特别有魅力的类型。他懂穿搭，会说话，总能在午夜时分给你发来恰到好处的问候。\n\n但姐妹，你可能不是唯一收到消息的人。建议下次约会选在白天，看看他是不是还那么迷人。",
-                quote: "「你的爱情，是一场灯光下的邂逅」"
-            },
-            B: {
-                badge: "命运解锁",
-                icon: "📷",
-                title: "摄影师和他的朋友们",
+                icon: "⚖️",
+                title: "你的真命天子：法制咖顶流",
+                subtitle: "恋爱体验：包吃包住",
                 stars: "⭐⭐",
-                ratingDesc: "适配指数：两颗星，因为你的照片可能出现在别人的相册里",
-                description: "你爱上的是他的艺术气质和那双会说话的眼睛。他喜欢记录生活，喜欢光影，喜欢把美好的瞬间定格下来。\n\n但温馨提示：有些瞬间，可能不适合被记录，更不适合被分享。建议你们的回忆，只留在脑海里。",
-                quote: "「你的爱情，是一场光影里的浪漫」"
+                ratingDesc: "适配指数：两颗星——因为两颗星是手铐的圈数",
+                description: "你和他般配的地方是——你有\"救世主情结\"，总觉得他能为你改变。但姐妹醒醒，他现在真的在\"改造\"，不过是国家帮你改造的。\n\n建议你去探监的时候问问：当年选妃的标准，你符合几条？",
+                quote: "「当年问'你有freestyle吗'，现在问'你有牢饭吗'」"
             },
-            C: {
+            '2': {
+                badge: "命运解锁",
+                icon: "🙏",
+                title: "你的真命天子：百里求佛",
+                subtitle: "恋爱体验：大孤山VIP年卡",
+                stars: "⭐",
+                ratingDesc: "适配指数：一颗星——因为剩下的星星都掉进功德箱了",
+                description: "你的男人从荧幕上的英雄，变成了大孤山古庙的求佛者。他为了复出四处求人，欠债5000万，去泰国开演唱会还要你买3500的VIP票。\n\n和他在一起，你得准备好：钱给他还债，命陪他跪拜，最后还要听他念叨\"欧凯\"。",
+                quote: "「当年在荧幕上演革命者，现在在古庙里演求佛者」"
+            },
+            '3': {
+                badge: "命运解锁",
+                icon: "📸",
+                title: "你的真命天子：2008摄影师",
+                subtitle: "恋爱体验：随时准备社死",
+                stars: "⭐⭐⭐",
+                ratingDesc: "适配指数：三颗星——多一颗给颜值",
+                description: "你爱上的是他的痞帅，但他给你的可能是\"全网可见\"。那场风波，受害的是女明星，背锅的是他，但拍照的是谁？是他。\n\n如果你和他在一起，建议提前做好心理准备：你们的私密时刻，可能不是两个人的事。",
+                quote: "「有些人拍照是记录生活，有些人拍照是改变人生」"
+            },
+            '4': {
+                badge: "命运解锁",
+                icon: "💢",
+                title: "你的真命天子：双标捐款侠",
+                subtitle: "恋爱体验：你捐款，他享受",
+                stars: "⭐⭐",
+                ratingDesc: "适配指数：两颗星——因为他的爱只给女儿，不包括你",
+                description: "恭喜你，抽到了\"升级版\"。他依然帅气，依然爱女儿，依然脾气火爆——火爆到会人肉骂他的网友，顺便人肉人家老婆。\n\n如果你和他在一起，建议先查查自己银行卡余额，因为下次他女儿学校被烧，可能轮到你捐款了。",
+                quote: "「别人翻车是道歉，他翻车是连你一起人肉」"
+            },
+            '5': {
                 badge: "命运解锁",
                 icon: "📊",
-                title: "PPT演说家",
+                title: "你的真命天子：PPT之神",
+                subtitle: "恋爱体验：全程PPT记录",
                 stars: "⭐⭐⭐",
-                ratingDesc: "适配指数：三颗星，多一颗给创意",
-                description: "你的他是一个很有仪式感的人，连道歉都要做PPT的那种。他逻辑清晰，条理分明，能把你讲到怀疑是不是自己错了。\n\n如果你和他在一起，建议学会Office全家桶，因为你们的婚姻可能需要用Excel管理。",
-                quote: "「你的爱情，是一场完美的项目汇报」"
+                ratingDesc: "适配指数：三颗星——多一颗给创意",
+                description: "你的男人出轨都出得这么有仪式感——自带PPT道歉，图文并茂，逻辑清晰，甚至还有批注。\n\n如果你和他在一起，建议每次吵架都让他做PPT汇报，顺便学学他的时间管理：毕竟能同时\"一次出轨\"和\"二次出轨\"的人，不是谁都能做到的。",
+                quote: "「别人道歉是念稿，他道歉是路演」"
             },
-            D: {
+            '6': {
                 badge: "命运解锁",
                 icon: "🎹",
-                title: "艺术家下乡记",
-                stars: "⭐",
-                ratingDesc: "适配指数：一颗星，因为另一颗在钢琴键上",
-                description: "你爱上的是他的优雅和艺术气质。他弹琴的样子让你着迷，他聊起音乐时眼睛会发光。\n\n但你可能不知道，艺术家也有不为人知的一面。建议下次约会，不要只关注他的手指，也多看看他的朋友圈。",
-                quote: "「你的爱情，是一首未完成的交响曲」"
-            },
-            E: {
-                badge: "命运解锁",
-                icon: "🎮",
-                title: "网瘾少年的秘密",
+                title: "你的真命天子：钢琴王子",
+                subtitle: "恋爱体验：弹的是法律的弦",
                 stars: "⭐⭐",
-                ratingDesc: "适配指数：两颗星，因为第三颗在游戏里",
-                description: "你的他是一个游戏宅，你以为他只是沉迷游戏才半夜不回家。\n\n但姐妹，有些网吧，不只是网吧。建议下次他说\"去开黑\"的时候，问问是开游戏的黑，还是开别的黑。",
-                quote: "「你的爱情，是一场永不结束的副本」"
+                ratingDesc: "适配指数：两颗星——因为他的音乐会门票可能随时取消",
+                description: "你的男人曾经用这双手弹奏肖邦，现在用这双手弹的是法律的弦。朝阳群众的举报让他从舞台中央跌落，但他还在海外巡演试图东山再起。\n\n和他在一起，你要准备好：听他弹琴的时候，顺便听听有没有警笛声。",
+                quote: "「弹钢琴的手，最后弹的是法律的弦」"
             },
-            F: {
-                badge: "✨ 隐藏款解锁 ✨",
-                icon: "⏰",
-                title: "时间管理大师的关门弟子",
-                stars: "⏰",
-                ratingDesc: "适配指数：给你一个闹钟，因为你需要记住他不在的时间",
-                description: "恭喜你，你抽中了\"全能型选手\"。他集以上所有特质于一身——会拍照、会弹琴、会做PPT、会在半夜发消息、还会告诉你他去网吧。\n\n建议你做好时间管理，因为你需要记住他分别属于多少个人。",
-                quote: "「你的爱情，是一门精密的时间管理课」"
+            '7': {
+                badge: "命运解锁",
+                icon: "📚",
+                title: "你的真命天子：学霸人设",
+                subtitle: "一句话送你下地狱",
+                stars: "⭐⭐",
+                ratingDesc: "适配指数：两颗星——多一颗给颜值",
+                description: "你们般配的地方是——你足够包容他的情商盆地。别人骂他的时候，你只会说\"他只是嘴笨\"。\n\n但姐妹提醒你：恋爱可以，上综艺别让他开口。",
+                quote: "「好看的皮囊千篇一律，不会说话的灵魂万里挑一」"
             },
-            G: {
-                badge: "🎁 彩蛋款解锁 🎁",
+            '8': {
+                badge: "命运解锁",
+                icon: "👑",
+                title: "你的真命天子：顶流幸存者",
+                subtitle: "从顶流之巅到风口浪尖",
+                stars: "⭐⭐⭐⭐",
+                ratingDesc: "适配指数：四颗星——多一颗给公开的勇气",
+                description: "你和他般配，是因为你也有\"流量思维\"——红的时候全世界爱你，塌的时候你还在。你不在乎他有没有代言、有没有作品，你在乎的是：当年官宣的时候，他至少没藏着。\n\n这种\"公开的勇气\"，就是你想要的。",
+                quote: "「在全员塌房的年代，敢公开就是最大的浪漫」"
+            },
+            '9': {
+                badge: "命运解锁",
+                icon: "🤫",
+                title: "你的真命天子：哑巴新郎",
+                subtitle: "沉默是今晚的康桥",
+                stars: "⭐⭐",
+                ratingDesc: "适配指数：两颗星——一颗给颜值，一颗给沉默的勇气",
+                description: "你爱上的是他的安静，他翻车也是因为太安静。当全网等着他解释的时候，他选择了沉默。而你觉得：沉默就是最好的回应。\n\n姐妹，你这是\"哑巴滤镜\"十级患者。",
+                quote: "「沉默是金，但有时候沉默是罚单」"
+            },
+            '10': {
+                badge: "命运解锁",
+                icon: "💕",
+                title: "你的真命天子：为爱退圈",
+                subtitle: "为爱放弃一切的男人",
+                stars: "⭐⭐⭐⭐",
+                ratingDesc: "适配指数：四颗星——给他的真心",
+                description: "你和他般配，是因为你也想被\"偏爱到放弃一切\"。他为了谈恋爱退圈，你觉得这是浪漫；他说\"太红了没法谈\"，你觉得这是真诚。\n\n建议你们一起去没人认识的地方，好好过日子。",
+                quote: "「别人退圈是被动的，他退圈是主动的——为爱」"
+            },
+            'K': {
+                badge: "🎁 隐藏款解锁 🎁",
                 icon: "📱",
-                title: "拍照的从来不是他",
+                title: "爆料体质",
+                subtitle: "你不是来谈恋爱的，你是来爆料的",
                 stars: "📱",
-                ratingDesc: "适配指数：给你一个手机，用来保护自己的隐私",
-                description: "你不是来谈恋爱的，你是来当摄影师的。你的真爱不是某个男明星，而是你自己——因为你才是那个手里握着聊天记录、相册截图的人。\n\n你的使命是：爱过，拍过，然后……你懂的。",
-                quote: "「你的使命，比爱情更伟大」"
+                ratingDesc: "适配指数：给你一个手机，用来维护正义",
+                description: "恭喜你！你抽中了\"幕后玩家\"隐藏款。从顶流到塌房明星，你爱的不是他们，是你手机里的聊天记录。\n\n你的使命是：爱过，截图过，然后爆过。建议你提前准备好流量账号，因为你的下一站，是直播间。",
+                quote: "「你的爱情，是一场全民吃瓜」"
             },
-            H: {
+            'L': {
                 badge: "🌟 真·彩蛋款 🌟",
-                icon: "🌟",
-                title: "清白の幸存者",
-                stars: "🌟🌟🌟🌟🌟",
-                ratingDesc: "适配指数：五颗星，因为暂时安全",
-                description: "在这个全员\"有故事\"的年代，你居然抽到了一个目前还算清白的。要么他不够红，要么他藏得够深。\n\n建议珍惜当下，且爱且珍惜。毕竟在这个圈子里，今天的\"幸存者\"，可能是明天的\"PPT主讲人\"。",
-                quote: "「你的爱情，是这个时代最后的净土」"
+                icon: "👮",
+                title: "朝阳群众",
+                subtitle: "你不是来谈恋爱的，你是来举报的",
+                stars: "👮",
+                ratingDesc: "适配指数：给你一个警徽，代表正义",
+                description: "恭喜你抽中\"朝阳群众\"限定款！你的真爱不是某个男明星，而是维护社会治安的使命感。\n\n别人谈恋爱是心动，你谈恋爱是行动——动动手指就举报。建议你常驻朝阳区，因为那里总有新的素材。",
+                quote: "「在你眼里，所有约会都不如举报来得有成就感」"
             }
         };
 
         // ===== STATE =====
         let currentQuestion = 0;
         let answers = [];
-        let scores = [0, 0, 0, 0, 0]; // A, B, C, D, E
+        let scores = new Array(10).fill(0);
 
         // ===== INIT =====
         function init() {
@@ -901,19 +957,16 @@
             const question = questions[questionIndex];
             const option = question.options[optionIndex];
 
-            // Update visual
             const questionEl = document.querySelectorAll('.quiz-question')[questionIndex];
             questionEl.querySelectorAll('.quiz-option').forEach((el, i) => {
                 el.classList.toggle('selected', i === optionIndex);
             });
 
-            // Record score
             answers[questionIndex] = optionIndex;
             option.score.forEach((s, i) => {
                 scores[i] += s;
             });
 
-            // Next question or finish
             setTimeout(() => {
                 if (questionIndex < questions.length - 1) {
                     currentQuestion = questionIndex + 1;
@@ -928,8 +981,6 @@
             const allQuestions = document.querySelectorAll('.quiz-question');
             allQuestions.forEach(q => q.classList.remove('active'));
             allQuestions[index].classList.add('active');
-
-            // Update progress
             document.getElementById('progress-text').textContent = `${index + 1} / ${questions.length}`;
             document.getElementById('progress-fill').style.width = `${((index + 1) / questions.length) * 100}%`;
         }
@@ -937,7 +988,7 @@
         function startQuiz() {
             currentQuestion = 0;
             answers = [];
-            scores = [0, 0, 0, 0, 0];
+            scores = new Array(10).fill(0);
             showPage('quiz-page');
             showQuestion(0);
         }
@@ -979,33 +1030,30 @@
         }
 
         function calculateResult() {
+            // K: hidden - specific camera/photo obsessed pattern
+            const cameraRelated = [0, 1, 1, 0, 0, 1, 0, 0, 0, 0];
+            const exposeScore = answers.reduce((acc, a, i) => acc + cameraRelated[i], 0);
+            if (exposeScore >= 5) return 'K';
+
+            // L: hidden - justice/report oriented pattern
+            const reportRelated = [0, 0, 0, 1, 1, 0, 0, 0, 0, 1];
+            const reportScore = answers.reduce((acc, a, i) => acc + reportRelated[i], 0);
+            if (reportScore >= 4) return 'L';
+
+            // Normal: pick highest score
             const max = Math.max(...scores);
             const maxIndex = scores.indexOf(max);
-            const total = scores.reduce((a, b) => a + b, 0);
-
-            // Check for hidden results
-            // G: too many B (photographer) answers
-            const bCount = answers.filter((a, i) => questions[i].options[a].score[1] > 0).length;
-            if (bCount >= 5) return 'G';
-
-            // F: relatively even distribution (multi-talented)
-            const uniqueNonZero = scores.filter(s => s > 0).length;
-            if (uniqueNonZero >= 4 && max <= 4) return 'F';
-
-            // H: no clear preference (all very low)
-            if (max <= 2) return 'H';
-
-            // Normal results
-            const resultMap = ['A', 'B', 'C', 'D', 'E'];
-            return resultMap[maxIndex];
+            return String(maxIndex + 1);
         }
 
         function showResult(type) {
             const result = results[type];
+            if (!result) return;
 
             document.getElementById('result-badge').textContent = result.badge;
             document.getElementById('result-icon').textContent = result.icon;
             document.getElementById('result-title').textContent = result.title;
+            document.getElementById('result-subtitle').textContent = result.subtitle || '';
             document.getElementById('result-stars').textContent = result.stars;
             document.getElementById('result-desc').textContent = result.description;
             document.getElementById('result-quote').textContent = result.quote;
@@ -1029,7 +1077,6 @@
                     url: window.location.href
                 }).catch(() => {});
             } else {
-                // Fallback: copy to clipboard
                 const text = `我测出来是「${icon} ${title}」，你呢？懂的都懂 👀`;
                 navigator.clipboard.writeText(text).then(() => {
                     showToast('结果已复制，快去分享给闺蜜吧 ✨');
