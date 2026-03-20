@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>测测你和哪位男明星最般配 - 抽象版</title>
+    <meta name="description" content="懂的都懂，不懂的别问。纯属娱乐，请勿对号入座。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --dark: #141414;
+            --gray-dark: #1e1e1e;
+            --gray: #333;
+            --gray-light: #666;
+            --gray-lighter: #999;
+            --white: #f0f0f0;
+            --red: #c41e3a;
+            --red-glow: rgba(196, 30, 58, 0.3);
+            --gold: #d4a853;
+            --pink: #e8a0bf;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== LOADING SCREEN ===== */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loading-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.2rem;
+            color: var(--gray-lighter);
+            letter-spacing: 0.5em;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+        .loading-bar {
+            width: 200px;
+            height: 2px;
+            background: var(--gray-dark);
+            margin-top: 2rem;
+            border-radius: 1px;
+            overflow: hidden;
+        }
+        .loading-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--red), var(--pink));
+            border-radius: 1px;
+            transition: width 0.3s ease;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== PAGE CONTAINER ===== */
+        .page {
+            display: none;
+            min-height: 100vh;
+            position: relative;
+        }
+        .page.active {
+            display: flex;
+            flex-direction: column;
+            animation: pageIn 0.6s ease;
+        }
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== COVER PAGE ===== */
+        #cover-page {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at 50% 30%, rgba(196,30,58,0.08) 0%, transparent 60%);
+        }
+        .cover-decoration {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .cover-silhouette {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 400px;
+            opacity: 0.04;
+        }
+        .cover-question-marks {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 15rem;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 900;
+            color: var(--white);
+            opacity: 0.02;
+            line-height: 1;
+        }
+        .cover-tag {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border: 1px solid var(--gray);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            color: var(--gray-lighter);
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+        }
+        .cover-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--white) 0%, var(--gray-lighter) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .cover-subtitle {
+            font-size: 1rem;
+            color: var(--gray-lighter);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+            font-family: 'Noto Serif SC', serif;
+        }
+        .cover-symbols {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+            opacity: 0.3;
+            font-size: 1.5rem;
+        }
+        .cover-symbols span {
+            animation: symbolFloat 3s ease-in-out infinite;
+        }
+        .cover-symbols span:nth-child(2) { animation-delay: 0.5s; }
+        .cover-symbols span:nth-child(3) { animation-delay: 1s; }
+        .cover-symbols span:nth-child(4) { animation-delay: 1.5s; }
+        @keyframes symbolFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* ===== START BUTTON ===== */
+        .btn-start {
+            padding: 1rem 3rem;
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            border-radius: 100px;
+            font-size: 1.1rem;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            letter-spacing: 0.1em;
+        }
+        .btn-start:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 40px var(--red-glow);
+        }
+        .btn-start:active {
+            transform: scale(0.98);
+        }
+        .btn-start::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+        }
+
+        /* ===== QUIZ PAGE ===== */
+        #quiz-page {
+            padding: 0;
+        }
+        .quiz-header {
+            position: sticky;
+            top: 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.2rem 1.5rem 1rem;
+            z-index: 10;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .quiz-progress {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .quiz-progress-text {
+            font-size: 0.8rem;
+            color: var(--gray-lighter);
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .quiz-progress-bar {
+            flex: 1;
+            height: 3px;
+            background: var(--gray-dark);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .quiz-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--red), var(--pink));
+            border-radius: 2px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .quiz-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem 1.5rem 3rem;
+        }
+        .quiz-question {
+            display: none;
+            animation: questionIn 0.5s ease;
+        }
+        .quiz-question.active {
+            display: block;
+        }
+        @keyframes questionIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .quiz-question-num {
+            font-size: 0.8rem;
+            color: var(--red);
+            margin-bottom: 0.8rem;
+            letter-spacing: 0.15em;
+            font-weight: 500;
+        }
+        .quiz-question-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ===== OPTIONS ===== */
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .quiz-option {
+            background: var(--gray-dark);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .quiz-option:hover {
+            background: var(--gray);
+            border-color: rgba(255,255,255,0.12);
+            transform: translateX(4px);
+        }
+        .quiz-option:active {
+            transform: scale(0.98);
+        }
+        .quiz-option.selected {
+            background: rgba(196, 30, 58, 0.15);
+            border-color: var(--red);
+        }
+        .quiz-option.selected::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 0% 50%, var(--red-glow), transparent 70%);
+            opacity: 0.3;
+        }
+        .option-letter {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--gray-lighter);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .quiz-option.selected .option-letter {
+            background: var(--red);
+            border-color: var(--red);
+            color: var(--white);
+        }
+        .option-content {
+            flex: 1;
+        }
+        .option-main {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--white);
+        }
+        .option-desc {
+            font-size: 0.8rem;
+            color: var(--gray-lighter);
+            margin-top: 0.3rem;
+            line-height: 1.4;
+        }
+
+        /* ===== RESULT PAGE ===== */
+        #result-page {
+            align-items: center;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .result-card {
+            max-width: 420px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .result-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border: 1px solid var(--red);
+            color: var(--red);
+            border-radius: 100px;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 1.5rem;
+        }
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: resultIconPulse 2s ease-in-out infinite;
+        }
+        @keyframes resultIconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .result-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.6rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+        }
+        .result-rating {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: var(--gray-dark);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .result-rating-label {
+            font-size: 0.7rem;
+            color: var(--gray-lighter);
+            letter-spacing: 0.15em;
+            margin-bottom: 0.3rem;
+        }
+        .result-rating-stars {
+            font-size: 1.5rem;
+            letter-spacing: 0.1em;
+        }
+        .result-description {
+            font-size: 0.95rem;
+            line-height: 2;
+            color: var(--gray-lighter);
+            text-align: left;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            border-left: 2px solid var(--red);
+            margin-bottom: 2rem;
+        }
+        .result-quote {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.85rem;
+            color: var(--gray-lighter);
+            font-style: italic;
+            margin-bottom: 2rem;
+            opacity: 0.6;
+        }
+        .result-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .btn-retry {
+            padding: 1rem 2rem;
+            background: transparent;
+            color: var(--white);
+            border: 1px solid var(--gray);
+            border-radius: 100px;
+            font-size: 0.95rem;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-retry:hover {
+            border-color: var(--white);
+            background: rgba(255,255,255,0.05);
+        }
+        .btn-share {
+            padding: 1rem 2rem;
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            border-radius: 100px;
+            font-size: 0.95rem;
+            font-family: 'Noto Sans SC', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-share:hover {
+            box-shadow: 0 0 30px var(--red-glow);
+        }
+        .disclaimer {
+            margin-top: 3rem;
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: var(--gray);
+            line-height: 1.8;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* ===== FLOATING PARTICLES ===== */
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--white);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFade 6s ease-in-out infinite;
+        }
+        @keyframes particleFade {
+            0%, 100% { opacity: 0; transform: translateY(0); }
+            50% { opacity: 0.15; transform: translateY(-100px); }
+        }
+
+        /* ===== ANALYZING PAGE ===== */
+        #analyzing-page {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .analyzing-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            animation: analyzingSpin 2s linear infinite;
+        }
+        @keyframes analyzingSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .analyzing-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.2rem;
+            color: var(--gray-lighter);
+            animation: analyzingDots 1.5s ease-in-out infinite;
+        }
+        @keyframes analyzingDots {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .analyzing-progress {
+            width: 200px;
+            height: 2px;
+            background: var(--gray-dark);
+            margin-top: 2rem;
+            border-radius: 1px;
+            overflow: hidden;
+        }
+        .analyzing-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--red), var(--gold));
+            border-radius: 1px;
+            transition: width 0.1s ease;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (min-width: 768px) {
+            .cover-title { font-size: 3rem; }
+            .quiz-question-text { font-size: 1.8rem; }
+            .result-title { font-size: 2rem; }
+            .result-description { font-size: 1rem; padding: 2rem; }
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--black); }
+        ::-webkit-scrollbar-thumb { background: var(--gray); border-radius: 2px; }
+
+        /* ===== SHARE TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gray);
+            color: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 100;
+            white-space: nowrap;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-text">命运加载中</div>
+        <div class="loading-bar">
+            <div class="loading-bar-fill" id="loading-fill"></div>
+        </div>
+    </div>
+
+    <!-- Cover Page -->
+    <div class="page" id="cover-page">
+        <div class="cover-decoration">
+            <div class="cover-question-marks">？</div>
+            <svg class="cover-silhouette" viewBox="0 0 300 400" fill="currentColor">
+                <ellipse cx="150" cy="80" rx="50" ry="60"/>
+                <path d="M60 400 Q60 200 150 170 Q240 200 240 400"/>
+            </svg>
+        </div>
+        <div class="cover-tag">ABSTRACT EDITION</div>
+        <h1 class="cover-title">测测你和哪位<br>男明星最般配</h1>
+        <p class="cover-subtitle">懂的都懂，不懂的别问<br>10道题，测出你的抽象缘分</p>
+        <div class="cover-symbols">
+            <span>🎹</span>
+            <span>📷</span>
+            <span>📱</span>
+            <span>⏰</span>
+        </div>
+        <button class="btn-start" onclick="startQuiz()">开始测试</button>
+    </div>
+
+    <!-- Quiz Page -->
+    <div class="page" id="quiz-page">
+        <div class="quiz-header">
+            <div class="quiz-progress">
+                <span class="quiz-progress-text" id="progress-text">1 / 10</span>
+                <div class="quiz-progress-bar">
+                    <div class="quiz-progress-fill" id="progress-fill" style="width: 10%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="quiz-body" id="quiz-body">
+            <!-- Questions will be injected here -->
+        </div>
+    </div>
+
+    <!-- Analyzing Page -->
+    <div class="page" id="analyzing-page">
+        <div class="analyzing-icon">🔮</div>
+        <div class="analyzing-text">正在为你解析命运...</div>
+        <div class="analyzing-progress">
+            <div class="analyzing-progress-fill" id="analyzing-fill"></div>
+        </div>
+    </div>
+
+    <!-- Result Page -->
+    <div class="page" id="result-page">
+        <div class="result-card">
+            <div class="result-badge" id="result-badge"></div>
+            <div class="result-icon" id="result-icon"></div>
+            <h2 class="result-title" id="result-title"></h2>
+            <div class="result-rating" id="result-rating">
+                <div class="result-rating-label">适配指数</div>
+                <div class="result-rating-stars" id="result-stars"></div>
+            </div>
+            <div class="result-description" id="result-desc"></div>
+            <div class="result-quote" id="result-quote"></div>
+            <div class="result-actions">
+                <button class="btn-share" onclick="shareResult()">分享结果给闺蜜</button>
+                <button class="btn-retry" onclick="retryQuiz()">再测一次</button>
+            </div>
+            <div class="disclaimer">
+                纯属娱乐，请勿对号入座<br>
+                本测试不涉及任何真实人物，所有内容均为虚构<br>
+                如有雷同，纯属巧合
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ===== DATA =====
+        const questions = [
+            {
+                question: "周末约会，他提议去哪里？",
+                options: [
+                    { letter: "A", main: "私人影院", desc: "说\"人少安静\"", score: [1, 0, 0, 0, 0] },
+                    { letter: "B", main: "网吧开黑", desc: "说\"带你上分\"", score: [0, 0, 0, 0, 1] },
+                    { letter: "C", main: "KTV包房", desc: "说\"给你唱我写的歌\"", score: [0, 0, 0, 1, 0] },
+                    { letter: "D", main: "家里做饭", desc: "说\"我厨艺很好\"", score: [0, 1, 0, 0, 0] }
+                ]
+            },
+            {
+                question: "他手机坏了，第一反应是？",
+                options: [
+                    { letter: "A", main: "自己修", desc: "修不好就扔", score: [0, 0, 0, 0, 1] },
+                    { letter: "B", main: "找街边小店", desc: "越快越好", score: [0, 0, 1, 0, 0] },
+                    { letter: "C", main: "找官方售后", desc: "安全第一", score: [0, 1, 0, 0, 0] },
+                    { letter: "D", main: "发微博吐槽", desc: "品牌方快看", score: [1, 0, 0, 0, 0] }
+                ]
+            },
+            {
+                question: "他发了一条朋友圈\"今晚有约\"，配图是？",
+                options: [
+                    { letter: "A", main: "一杯红酒+昏暗灯光", desc: "", score: [1, 0, 0, 0, 0] },
+                    { letter: "B", main: "游戏战绩截图", desc: "", score: [0, 0, 0, 0, 1] },
+                    { letter: "C", main: "钢琴键盘一角", desc: "", score: [0, 0, 0, 1, 0] },
+                    { letter: "D", main: "自拍，但只露眼睛", desc: "", score: [0, 1, 0, 0, 0] }
+                ]
+            },
+            {
+                question: "吵架后他怎么道歉？",
+                options: [
+                    { letter: "A", main: "写小作文", desc: "声情并茂", score: [1, 0, 0, 0, 0] },
+                    { letter: "B", main: "做个PPT", desc: "逐条分析", score: [0, 0, 1, 0, 0] },
+                    { letter: "C", main: "直接转账5200", desc: "行动派", score: [0, 0, 0, 0, 1] },
+                    { letter: "D", main: "假装没发生", desc: "第二天正常说话", score: [0, 1, 0, 0, 0] }
+                ]
+            },
+            {
+                question: "他突然说\"我想消失一段时间\"，你觉得是？",
+                options: [
+                    { letter: "A", main: "要进组拍戏了", desc: "", score: [0, 0, 0, 0, 1] },
+                    { letter: "B", main: "要去深造学习", desc: "", score: [0, 0, 0, 1, 0] },
+                    { letter: "C", main: "可能要出事了", desc: "", score: [1, 0, 0, 0, 0] },
+                    { letter: "D", main: "准备给我惊喜", desc: "", score: [0, 1, 0, 0, 0] }
+                ]
+            },
+            {
+                question: "他最喜欢收藏什么？",
+                options: [
+                    { letter: "A", main: "限量版球鞋", desc: "", score: [1, 0, 0, 0, 0] },
+                    { letter: "B", main: "各种相机", desc: "", score: [0, 1, 0, 0, 0] },
+                    { letter: "C", main: "钢琴谱手稿", desc: "", score: [0, 0, 0, 1, 0] },
+                    { letter: "D", main: "粉丝写的信", desc: "", score: [0, 0, 0, 0, 1] }
+                ]
+            },
+            {
+                question: "半夜三点他给你发消息，内容是？",
+                options: [
+                    { letter: "A", main: "\"睡了吗？\"", desc: "", score: [1, 0, 0, 0, 0] },
+                    { letter: "B", main: "一首他自己唱的歌", desc: "", score: [0, 0, 0, 1, 0] },
+                    { letter: "C", main: "一张今天的自拍", desc: "", score: [0, 1, 0, 0, 0] },
+                    { letter: "D", main: "游戏复活求带", desc: "", score: [0, 0, 0, 0, 1] }
+                ]
+            },
+            {
+                question: "他被朋友爆料\"私底下其实很……\"",
+                options: [
+                    { letter: "A", main: "高冷，不爱说话", desc: "", score: [0, 1, 0, 0, 0] },
+                    { letter: "B", main: "爱开玩笑，气氛担当", desc: "", score: [0, 0, 1, 0, 0] },
+                    { letter: "C", main: "爱聊哲学，特别深沉", desc: "", score: [0, 0, 0, 1, 0] },
+                    { letter: "D", main: "爱打游戏，能打一天", desc: "", score: [1, 0, 0, 0, 1] }
+                ]
+            },
+            {
+                question: "你们第一次约会，他穿的是？",
+                options: [
+                    { letter: "A", main: "全套奢侈品", desc: "恨不得把logo穿身上", score: [1, 0, 0, 0, 0] },
+                    { letter: "B", main: "休闲卫衣", desc: "戴个口罩", score: [0, 1, 0, 0, 0] },
+                    { letter: "C", main: "西装", desc: "像要去演出", score: [0, 0, 0, 1, 0] },
+                    { letter: "D", main: "普通T恤", desc: "看不出牌子", score: [0, 0, 0, 0, 1] }
+                ]
+            },
+            {
+                question: "他发了一条微博只写\"抱歉\"，你觉得是为什么？",
+                options: [
+                    { letter: "A", main: "鸽了粉丝见面会", desc: "", score: [0, 0, 1, 0, 0] },
+                    { letter: "B", main: "综艺录制出了点问题", desc: "", score: [1, 0, 0, 0, 0] },
+                    { letter: "C", main: "新歌延期了", desc: "", score: [0, 0, 0, 1, 0] },
+                    { letter: "D", main: "不太想说，但应该没事", desc: "", score: [0, 1, 0, 0, 0] }
+                ]
+            }
+        ];
+
+        // scores: [A(夜店), B(摄影), C(PPT), D(艺术), E(网瘾)]
+        // Special: F(全能), G(彩蛋), H(真彩蛋)
+
+        const results = {
+            A: {
+                badge: "命运解锁",
+                icon: "🍷",
+                title: "夜店小王子的进化版",
+                stars: "⭐",
+                ratingDesc: "适配指数：一颗星，因为另一颗在别人手里",
+                description: "你喜欢的是那种在昏暗灯光下特别有魅力的类型。他懂穿搭，会说话，总能在午夜时分给你发来恰到好处的问候。\n\n但姐妹，你可能不是唯一收到消息的人。建议下次约会选在白天，看看他是不是还那么迷人。",
+                quote: "「你的爱情，是一场灯光下的邂逅」"
+            },
+            B: {
+                badge: "命运解锁",
+                icon: "📷",
+                title: "摄影师和他的朋友们",
+                stars: "⭐⭐",
+                ratingDesc: "适配指数：两颗星，因为你的照片可能出现在别人的相册里",
+                description: "你爱上的是他的艺术气质和那双会说话的眼睛。他喜欢记录生活，喜欢光影，喜欢把美好的瞬间定格下来。\n\n但温馨提示：有些瞬间，可能不适合被记录，更不适合被分享。建议你们的回忆，只留在脑海里。",
+                quote: "「你的爱情，是一场光影里的浪漫」"
+            },
+            C: {
+                badge: "命运解锁",
+                icon: "📊",
+                title: "PPT演说家",
+                stars: "⭐⭐⭐",
+                ratingDesc: "适配指数：三颗星，多一颗给创意",
+                description: "你的他是一个很有仪式感的人，连道歉都要做PPT的那种。他逻辑清晰，条理分明，能把你讲到怀疑是不是自己错了。\n\n如果你和他在一起，建议学会Office全家桶，因为你们的婚姻可能需要用Excel管理。",
+                quote: "「你的爱情，是一场完美的项目汇报」"
+            },
+            D: {
+                badge: "命运解锁",
+                icon: "🎹",
+                title: "艺术家下乡记",
+                stars: "⭐",
+                ratingDesc: "适配指数：一颗星，因为另一颗在钢琴键上",
+                description: "你爱上的是他的优雅和艺术气质。他弹琴的样子让你着迷，他聊起音乐时眼睛会发光。\n\n但你可能不知道，艺术家也有不为人知的一面。建议下次约会，不要只关注他的手指，也多看看他的朋友圈。",
+                quote: "「你的爱情，是一首未完成的交响曲」"
+            },
+            E: {
+                badge: "命运解锁",
+                icon: "🎮",
+                title: "网瘾少年的秘密",
+                stars: "⭐⭐",
+                ratingDesc: "适配指数：两颗星，因为第三颗在游戏里",
+                description: "你的他是一个游戏宅，你以为他只是沉迷游戏才半夜不回家。\n\n但姐妹，有些网吧，不只是网吧。建议下次他说\"去开黑\"的时候，问问是开游戏的黑，还是开别的黑。",
+                quote: "「你的爱情，是一场永不结束的副本」"
+            },
+            F: {
+                badge: "✨ 隐藏款解锁 ✨",
+                icon: "⏰",
+                title: "时间管理大师的关门弟子",
+                stars: "⏰",
+                ratingDesc: "适配指数：给你一个闹钟，因为你需要记住他不在的时间",
+                description: "恭喜你，你抽中了\"全能型选手\"。他集以上所有特质于一身——会拍照、会弹琴、会做PPT、会在半夜发消息、还会告诉你他去网吧。\n\n建议你做好时间管理，因为你需要记住他分别属于多少个人。",
+                quote: "「你的爱情，是一门精密的时间管理课」"
+            },
+            G: {
+                badge: "🎁 彩蛋款解锁 🎁",
+                icon: "📱",
+                title: "拍照的从来不是他",
+                stars: "📱",
+                ratingDesc: "适配指数：给你一个手机，用来保护自己的隐私",
+                description: "你不是来谈恋爱的，你是来当摄影师的。你的真爱不是某个男明星，而是你自己——因为你才是那个手里握着聊天记录、相册截图的人。\n\n你的使命是：爱过，拍过，然后……你懂的。",
+                quote: "「你的使命，比爱情更伟大」"
+            },
+            H: {
+                badge: "🌟 真·彩蛋款 🌟",
+                icon: "🌟",
+                title: "清白の幸存者",
+                stars: "🌟🌟🌟🌟🌟",
+                ratingDesc: "适配指数：五颗星，因为暂时安全",
+                description: "在这个全员\"有故事\"的年代，你居然抽到了一个目前还算清白的。要么他不够红，要么他藏得够深。\n\n建议珍惜当下，且爱且珍惜。毕竟在这个圈子里，今天的\"幸存者\"，可能是明天的\"PPT主讲人\"。",
+                quote: "「你的爱情，是这个时代最后的净土」"
+            }
+        };
+
+        // ===== STATE =====
+        let currentQuestion = 0;
+        let answers = [];
+        let scores = [0, 0, 0, 0, 0]; // A, B, C, D, E
+
+        // ===== INIT =====
+        function init() {
+            createParticles();
+            simulateLoading();
+            renderQuestions();
+        }
+
+        function simulateLoading() {
+            const fill = document.getElementById('loading-fill');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 25 + 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').classList.add('hidden');
+                        showPage('cover-page');
+                    }, 300);
+                }
+                fill.style.width = progress + '%';
+            }, 200);
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // ===== QUIZ LOGIC =====
+        function renderQuestions() {
+            const body = document.getElementById('quiz-body');
+            body.innerHTML = questions.map((q, qi) => `
+                <div class="quiz-question ${qi === 0 ? 'active' : ''}" data-index="${qi}">
+                    <div class="quiz-question-num">QUESTION ${String(qi + 1).padStart(2, '0')}</div>
+                    <div class="quiz-question-text">${q.question}</div>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, oi) => `
+                            <div class="quiz-option" onclick="selectOption(${qi}, ${oi})">
+                                <div class="option-letter">${opt.letter}</div>
+                                <div class="option-content">
+                                    <div class="option-main">${opt.main}</div>
+                                    ${opt.desc ? `<div class="option-desc">"${opt.desc}"</div>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            const question = questions[questionIndex];
+            const option = question.options[optionIndex];
+
+            // Update visual
+            const questionEl = document.querySelectorAll('.quiz-question')[questionIndex];
+            questionEl.querySelectorAll('.quiz-option').forEach((el, i) => {
+                el.classList.toggle('selected', i === optionIndex);
+            });
+
+            // Record score
+            answers[questionIndex] = optionIndex;
+            option.score.forEach((s, i) => {
+                scores[i] += s;
+            });
+
+            // Next question or finish
+            setTimeout(() => {
+                if (questionIndex < questions.length - 1) {
+                    currentQuestion = questionIndex + 1;
+                    showQuestion(currentQuestion);
+                } else {
+                    finishQuiz();
+                }
+            }, 400);
+        }
+
+        function showQuestion(index) {
+            const allQuestions = document.querySelectorAll('.quiz-question');
+            allQuestions.forEach(q => q.classList.remove('active'));
+            allQuestions[index].classList.add('active');
+
+            // Update progress
+            document.getElementById('progress-text').textContent = `${index + 1} / ${questions.length}`;
+            document.getElementById('progress-fill').style.width = `${((index + 1) / questions.length) * 100}%`;
+        }
+
+        function startQuiz() {
+            currentQuestion = 0;
+            answers = [];
+            scores = [0, 0, 0, 0, 0];
+            showPage('quiz-page');
+            showQuestion(0);
+        }
+
+        function finishQuiz() {
+            showPage('analyzing-page');
+            animateAnalyzing();
+        }
+
+        function animateAnalyzing() {
+            const fill = document.getElementById('analyzing-fill');
+            let progress = 0;
+            const texts = ['正在分析你的选择...', '正在匹配命运数据库...', '正在计算缘分值...', '正在生成专属结果...'];
+            const textEl = document.querySelector('.analyzing-text');
+            let textIndex = 0;
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 3 + 1;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        const resultType = calculateResult();
+                        showResult(resultType);
+                    }, 400);
+                }
+                fill.style.width = progress + '%';
+
+                const newTextIndex = Math.min(Math.floor(progress / 25), texts.length - 1);
+                if (newTextIndex !== textIndex) {
+                    textIndex = newTextIndex;
+                    textEl.style.opacity = 0;
+                    setTimeout(() => {
+                        textEl.textContent = texts[textIndex];
+                        textEl.style.opacity = 1;
+                    }, 200);
+                }
+            }, 60);
+        }
+
+        function calculateResult() {
+            const max = Math.max(...scores);
+            const maxIndex = scores.indexOf(max);
+            const total = scores.reduce((a, b) => a + b, 0);
+
+            // Check for hidden results
+            // G: too many B (photographer) answers
+            const bCount = answers.filter((a, i) => questions[i].options[a].score[1] > 0).length;
+            if (bCount >= 5) return 'G';
+
+            // F: relatively even distribution (multi-talented)
+            const uniqueNonZero = scores.filter(s => s > 0).length;
+            if (uniqueNonZero >= 4 && max <= 4) return 'F';
+
+            // H: no clear preference (all very low)
+            if (max <= 2) return 'H';
+
+            // Normal results
+            const resultMap = ['A', 'B', 'C', 'D', 'E'];
+            return resultMap[maxIndex];
+        }
+
+        function showResult(type) {
+            const result = results[type];
+
+            document.getElementById('result-badge').textContent = result.badge;
+            document.getElementById('result-icon').textContent = result.icon;
+            document.getElementById('result-title').textContent = result.title;
+            document.getElementById('result-stars').textContent = result.stars;
+            document.getElementById('result-desc').textContent = result.description;
+            document.getElementById('result-quote').textContent = result.quote;
+            document.getElementById('result-rating').querySelector('.result-rating-label').textContent = result.ratingDesc;
+
+            showPage('result-page');
+        }
+
+        function retryQuiz() {
+            startQuiz();
+        }
+
+        function shareResult() {
+            const title = document.getElementById('result-title').textContent;
+            const icon = document.getElementById('result-icon').textContent;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: '测测你和哪位男明星最般配',
+                    text: `我测出来是「${icon} ${title}」，你呢？懂的都懂 👀`,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                // Fallback: copy to clipboard
+                const text = `我测出来是「${icon} ${title}」，你呢？懂的都懂 👀`;
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('结果已复制，快去分享给闺蜜吧 ✨');
+                }).catch(() => {
+                    showToast('长按复制链接分享给闺蜜');
+                });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ===== START =====
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
