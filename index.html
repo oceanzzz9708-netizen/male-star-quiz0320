@@ -1,1100 +1,528 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>测测你和哪位KPL选手最有缘</title>
-    <meta name="description" content="10道题测出你的KPL灵魂伴侣。纯属娱乐，请勿当真。">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --black: #0a0a0a;
-            --dark: #141414;
-            --gray-dark: #1e1e1e;
-            --gray: #333;
-            --gray-light: #666;
-            --gray-lighter: #999;
-            --white: #f0f0f0;
-            --red: #c41e3a;
-            --red-glow: rgba(196, 30, 58, 0.3);
-            --gold: #d4a853;
-            --pink: #e8a0bf;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>测测你和哪个KPL选手最有缘</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @font-face { font-family: 'sys'; src: local('PingFang SC'), local('Microsoft YaHei'), local('sans-serif'); }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+  :root {
+    --bg: #0a0e1a;
+    --card: rgba(20, 28, 58, 0.85);
+    --gold: #f5c842;
+    --gold2: #ff8c00;
+    --accent: #00d4ff;
+    --purple: #a855f7;
+    --pink: #f472b6;
+    --text: #e8eaf0;
+    --muted: #8892b0;
+  }
 
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background: var(--black);
-            color: var(--white);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+  body {
+    font-family: 'sys', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        /* ===== LOADING SCREEN ===== */
-        #loading-screen {
-            position: fixed;
-            inset: 0;
-            background: var(--black);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
-        #loading-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        .loading-text {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.2rem;
-            color: var(--gray-lighter);
-            letter-spacing: 0.5em;
-            animation: loadingPulse 1.5s ease-in-out infinite;
-        }
-        .loading-bar {
-            width: 200px;
-            height: 2px;
-            background: var(--gray-dark);
-            margin-top: 2rem;
-            border-radius: 1px;
-            overflow: hidden;
-        }
-        .loading-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--red), var(--pink));
-            border-radius: 1px;
-            transition: width 0.3s ease;
-        }
+  /* 星空背景 */
+  .stars {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(88, 28, 135, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(0, 100, 200, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+    z-index: 0;
+  }
+  .stars::after {
+    content: '';
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+      radial-gradient(2px 2px at 40px 70px, #fff, transparent),
+      radial-gradient(1px 1px at 90px 40px, #ddf, transparent),
+      radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+      radial-gradient(2px 2px at 160px 30px, #eee, transparent),
+      radial-gradient(1px 1px at 200px 60px, #fff, transparent),
+      radial-gradient(2px 2px at 250px 20px, #ddf, transparent),
+      radial-gradient(1px 1px at 300px 50px, #fff, transparent);
+    background-size: 320px 100px;
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { 0% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        @keyframes loadingPulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
+  .container {
+    position: relative; z-index: 1;
+    max-width: 480px; margin: 0 auto;
+    padding: 20px 16px;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
 
-        /* ===== PAGE CONTAINER ===== */
-        .page {
-            display: none;
-            min-height: 100vh;
-            position: relative;
-        }
-        .page.active {
-            display: flex;
-            flex-direction: column;
-            animation: pageIn 0.6s ease;
-        }
-        @keyframes pageIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+  /* 开始页 */
+  .start-page { text-align: center; animation: fadeUp 0.8s ease; }
+  .start-page .logo {
+    width: 120px; height: 120px;
+    background: linear-gradient(135deg, var(--gold), var(--gold2), var(--purple));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 52px;
+    box-shadow: 0 0 40px rgba(245, 200, 66, 0.4), 0 0 80px rgba(168, 85, 247, 0.2);
+    animation: glow 3s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    0% { box-shadow: 0 0 40px rgba(245, 200, 66, 0.4), 0 0 80px rgba(168, 85, 247, 0.2); transform: scale(1); }
+    100% { box-shadow: 0 0 60px rgba(245, 200, 66, 0.6), 0 0 120px rgba(168, 85, 247, 0.3); transform: scale(1.05); }
+  }
+  .start-page h1 {
+    font-size: 28px; font-weight: 800;
+    background: linear-gradient(90deg, var(--gold), var(--accent), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .start-page .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 36px; line-height: 1.6; }
 
-        /* ===== COVER PAGE ===== */
-        #cover-page {
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 2rem;
-            background: radial-gradient(ellipse at 50% 30%, rgba(196,30,58,0.08) 0%, transparent 60%);
-        }
-        .cover-decoration {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .cover-silhouette {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 400px;
-            opacity: 0.04;
-        }
-        .cover-question-marks {
-            position: absolute;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 15rem;
-            font-family: 'Noto Serif SC', serif;
-            font-weight: 900;
-            color: var(--white);
-            opacity: 0.02;
-            line-height: 1;
-        }
-        .cover-tag {
-            display: inline-block;
-            padding: 0.3rem 1rem;
-            border: 1px solid var(--gray);
-            border-radius: 100px;
-            font-size: 0.75rem;
-            color: var(--gray-lighter);
-            letter-spacing: 0.2em;
-            margin-bottom: 2rem;
-        }
-        .cover-title {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 2.4rem;
-            font-weight: 900;
-            line-height: 1.3;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--white) 0%, var(--gray-lighter) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .cover-subtitle {
-            font-size: 1rem;
-            color: var(--gray-lighter);
-            margin-bottom: 3rem;
-            line-height: 1.8;
-            font-family: 'Noto Serif SC', serif;
-        }
-        .cover-symbols {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin-bottom: 3rem;
-            opacity: 0.3;
-            font-size: 1.5rem;
-        }
-        .cover-symbols span {
-            animation: symbolFloat 3s ease-in-out infinite;
-        }
-        .cover-symbols span:nth-child(2) { animation-delay: 0.5s; }
-        .cover-symbols span:nth-child(3) { animation-delay: 1s; }
-        .cover-symbols span:nth-child(4) { animation-delay: 1.5s; }
-        @keyframes symbolFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
+  .btn-start {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #0a0e1a; border: none;
+    padding: 16px 60px; font-size: 18px; font-weight: 700;
+    border-radius: 50px; cursor: pointer;
+    box-shadow: 0 4px 24px rgba(245, 200, 66, 0.4);
+    transition: all 0.3s ease;
+    position: relative; overflow: hidden;
+  }
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(245, 200, 66, 0.5); }
+  .btn-start:active { transform: translateY(0); }
 
-        /* ===== START BUTTON ===== */
-        .btn-start {
-            padding: 1rem 3rem;
-            background: var(--red);
-            color: var(--white);
-            border: none;
-            border-radius: 100px;
-            font-size: 1.1rem;
-            font-family: 'Noto Sans SC', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
-            letter-spacing: 0.1em;
-        }
-        .btn-start:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 40px var(--red-glow);
-        }
-        .btn-start:active {
-            transform: scale(0.98);
-        }
-        .btn-start::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-        }
+  /* 题目页 */
+  .quiz-page { display: none; width: 100%; animation: fadeUp 0.5s ease; }
+  .progress-bar {
+    width: 100%; height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px; margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--accent));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  .question-num { color: var(--gold); font-size: 13px; margin-bottom: 8px; font-weight: 600; }
+  .question-text { font-size: 20px; font-weight: 700; margin-bottom: 28px; line-height: 1.5; }
 
-        /* ===== QUIZ PAGE ===== */
-        #quiz-page {
-            padding: 0;
-        }
-        .quiz-header {
-            position: sticky;
-            top: 0;
-            background: rgba(10,10,10,0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 1.2rem 1.5rem 1rem;
-            z-index: 10;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .quiz-progress {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-        .quiz-progress-text {
-            font-size: 0.8rem;
-            color: var(--gray-lighter);
-            white-space: nowrap;
-            font-variant-numeric: tabular-nums;
-        }
-        .quiz-progress-bar {
-            flex: 1;
-            height: 3px;
-            background: var(--gray-dark);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        .quiz-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--red), var(--pink));
-            border-radius: 2px;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .quiz-body {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 2rem 1.5rem 3rem;
-        }
-        .quiz-question {
-            display: none;
-            animation: questionIn 0.5s ease;
-        }
-        .quiz-question.active {
-            display: block;
-        }
-        @keyframes questionIn {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .quiz-question-num {
-            font-size: 0.8rem;
-            color: var(--red);
-            margin-bottom: 0.8rem;
-            letter-spacing: 0.15em;
-            font-weight: 500;
-        }
-        .quiz-question-text {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.6;
-            margin-bottom: 2.5rem;
-        }
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .option-btn {
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 16px 20px;
+    color: var(--text); font-size: 16px;
+    cursor: pointer; text-align: left;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(10px);
+    line-height: 1.5;
+  }
+  .option-btn:hover {
+    border-color: var(--gold);
+    background: rgba(245, 200, 66, 0.1);
+    transform: translateX(4px);
+  }
+  .option-btn:active { transform: scale(0.98); }
+  .option-btn .letter {
+    display: inline-block;
+    width: 26px; height: 26px;
+    line-height: 26px; text-align: center;
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    font-size: 13px; font-weight: 700;
+    margin-right: 12px;
+    color: var(--gold);
+    transition: all 0.25s;
+  }
+  .option-btn:hover .letter { background: var(--gold); color: #0a0e1a; }
 
-        /* ===== OPTIONS ===== */
-        .quiz-options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        .quiz-option {
-            background: var(--gray-dark);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 1.2rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .quiz-option:hover {
-            background: var(--gray);
-            border-color: rgba(255,255,255,0.12);
-            transform: translateX(4px);
-        }
-        .quiz-option:active {
-            transform: scale(0.98);
-        }
-        .quiz-option.selected {
-            background: rgba(196, 30, 58, 0.15);
-            border-color: var(--red);
-        }
-        .quiz-option.selected::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 0% 50%, var(--red-glow), transparent 70%);
-            opacity: 0.3;
-        }
-        .option-letter {
-            flex-shrink: 0;
-            width: 28px;
-            height: 28px;
-            border: 1px solid var(--gray);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            color: var(--gray-lighter);
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-        .quiz-option.selected .option-letter {
-            background: var(--red);
-            border-color: var(--red);
-            color: var(--white);
-        }
-        .option-content {
-            flex: 1;
-        }
-        .option-main {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: var(--white);
-        }
-        .option-desc {
-            font-size: 0.8rem;
-            color: var(--gray-lighter);
-            margin-top: 0.3rem;
-            line-height: 1.4;
-        }
+  /* 结果页 */
+  .result-page { display: none; text-align: center; animation: fadeUp 0.8s ease; width: 100%; }
+  .result-card {
+    background: var(--card);
+    border: 1.5px solid rgba(245, 200, 66, 0.2);
+    border-radius: 24px;
+    padding: 36px 24px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .result-label {
+    font-size: 13px; color: var(--muted);
+    letter-spacing: 4px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .result-avatar {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+    background: linear-gradient(135deg, rgba(245, 200, 66, 0.2), rgba(168, 85, 247, 0.2));
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 30px rgba(245, 200, 66, 0.3);
+  }
+  .result-name {
+    font-size: 28px; font-weight: 800;
+    background: linear-gradient(90deg, var(--gold), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 4px;
+  }
+  .result-role { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .result-desc {
+    font-size: 15px; line-height: 1.8;
+    color: var(--text); text-align: left;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 12px;
+  }
+  .result-match {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin-bottom: 24px;
+    font-size: 14px; color: var(--muted);
+  }
+  .result-match .score {
+    font-size: 36px; font-weight: 800;
+    color: var(--gold);
+  }
 
-        /* ===== RESULT PAGE ===== */
-        #result-page {
-            align-items: center;
-            padding: 2rem 1.5rem;
-            min-height: 100vh;
-            text-align: center;
-        }
-        .result-card {
-            max-width: 420px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        .result-badge {
-            display: inline-block;
-            padding: 0.3rem 1rem;
-            border: 1px solid var(--red);
-            color: var(--red);
-            border-radius: 100px;
-            font-size: 0.7rem;
-            letter-spacing: 0.2em;
-            margin-bottom: 1.5rem;
-        }
-        .result-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            animation: resultIconPulse 2s ease-in-out infinite;
-        }
-        @keyframes resultIconPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        .result-title {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.6rem;
-            font-weight: 900;
-            line-height: 1.4;
-            margin-bottom: 1rem;
-        }
-        .result-rating {
-            display: inline-block;
-            padding: 0.8rem 1.5rem;
-            background: var(--gray-dark);
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .result-rating-label {
-            font-size: 0.7rem;
-            color: var(--gray-lighter);
-            letter-spacing: 0.15em;
-            margin-bottom: 0.3rem;
-        }
-        .result-rating-stars {
-            font-size: 1.5rem;
-            letter-spacing: 0.1em;
-        }
-        .result-description {
-            font-size: 0.95rem;
-            line-height: 2;
-            color: var(--gray-lighter);
-            text-align: left;
-            padding: 1.5rem;
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-            border-left: 2px solid var(--red);
-            margin-bottom: 2rem;
-        }
-        .result-quote {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 0.85rem;
-            color: var(--gray-lighter);
-            font-style: italic;
-            margin-bottom: 2rem;
-            opacity: 0.6;
-        }
-        .result-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-            margin-top: 1rem;
-        }
-        .btn-retry {
-            padding: 1rem 2rem;
-            background: transparent;
-            color: var(--white);
-            border: 1px solid var(--gray);
-            border-radius: 100px;
-            font-size: 0.95rem;
-            font-family: 'Noto Sans SC', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-retry:hover {
-            border-color: var(--white);
-            background: rgba(255,255,255,0.05);
-        }
-        .btn-share {
-            padding: 1rem 2rem;
-            background: var(--red);
-            color: var(--white);
-            border: none;
-            border-radius: 100px;
-            font-size: 0.95rem;
-            font-family: 'Noto Sans SC', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-share:hover {
-            box-shadow: 0 0 30px var(--red-glow);
-        }
-        .disclaimer {
-            margin-top: 3rem;
-            padding: 1rem;
-            font-size: 0.7rem;
-            color: var(--gray);
-            line-height: 1.8;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
+  .btn-restart {
+    background: transparent;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    padding: 14px 48px;
+    font-size: 16px; font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-restart:hover { background: rgba(245, 200, 66, 0.1); }
 
-        /* ===== FLOATING PARTICLES ===== */
-        .particles {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--white);
-            border-radius: 50%;
-            opacity: 0;
-            animation: particleFade 6s ease-in-out infinite;
-        }
-        @keyframes particleFade {
-            0%, 100% { opacity: 0; transform: translateY(0); }
-            50% { opacity: 0.15; transform: translateY(-100px); }
-        }
+  .share-tip { color: var(--muted); font-size: 12px; margin-top: 16px; }
 
-        /* ===== ANALYZING PAGE ===== */
-        #analyzing-page {
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 2rem;
-        }
-        .analyzing-icon {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            animation: analyzingSpin 2s linear infinite;
-        }
-        @keyframes analyzingSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .analyzing-text {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.2rem;
-            color: var(--gray-lighter);
-            animation: analyzingDots 1.5s ease-in-out infinite;
-        }
-        @keyframes analyzingDots {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-        .analyzing-progress {
-            width: 200px;
-            height: 2px;
-            background: var(--gray-dark);
-            margin-top: 2rem;
-            border-radius: 1px;
-            overflow: hidden;
-        }
-        .analyzing-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--red), var(--gold));
-            border-radius: 1px;
-            transition: width 0.1s ease;
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (min-width: 768px) {
-            .cover-title { font-size: 3rem; }
-            .quiz-question-text { font-size: 1.8rem; }
-            .result-title { font-size: 2rem; }
-            .result-description { font-size: 1rem; padding: 2rem; }
-        }
-
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--black); }
-        ::-webkit-scrollbar-thumb { background: var(--gray); border-radius: 2px; }
-
-        /* ===== SHARE TOAST ===== */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--gray);
-            color: var(--white);
-            padding: 0.8rem 1.5rem;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            opacity: 0;
-            transition: all 0.4s ease;
-            z-index: 100;
-            white-space: nowrap;
-        }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-    </style>
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 </head>
 <body>
-    <!-- Particles Background -->
-    <div class="particles" id="particles"></div>
 
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="loading-text">缘分加载中</div>
-        <div class="loading-bar">
-            <div class="loading-bar-fill" id="loading-fill"></div>
-        </div>
+<div class="stars"></div>
+
+<div class="container">
+  <!-- 开始页 -->
+  <div class="start-page" id="startPage">
+    <div class="logo">🎮</div>
+    <h1>测测你和哪个KPL选手最有缘</h1>
+    <p class="subtitle">
+      8道趣味题目，精准匹配你的电竞灵魂伴侣<br>
+      是稳如泰山的野王，还是carry全场的射手？
+    </p>
+    <button class="btn-start" onclick="startQuiz()">开始测试</button>
+  </div>
+
+  <!-- 题目页 -->
+  <div class="quiz-page" id="quizPage">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="question-num" id="questionNum"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsContainer"></div>
+  </div>
+
+  <!-- 结果页 -->
+  <div class="result-page" id="resultPage">
+    <div class="result-card">
+      <div class="result-label">你与以下KPL选手最有缘</div>
+      <div class="result-avatar" id="resultAvatar"></div>
+      <div class="result-name" id="resultName"></div>
+      <div class="result-role" id="resultRole"></div>
+      <div class="result-desc" id="resultDesc"></div>
+      <div class="result-match">
+        缘分指数 <span class="score" id="resultScore"></span>%
+      </div>
+      <button class="btn-restart" onclick="restartQuiz()">再测一次</button>
+      <div class="share-tip">截图分享给好友，看看谁和谁是最佳搭档！</div>
     </div>
+  </div>
+</div>
 
-    <!-- Cover Page -->
-    <div class="page" id="cover-page">
-        <div class="cover-decoration">
-            <div class="cover-question-marks">？</div>
-            <svg class="cover-silhouette" viewBox="0 0 300 400" fill="currentColor">
-                <ellipse cx="150" cy="80" rx="50" ry="60"/>
-                <path d="M60 400 Q60 200 150 170 Q240 200 240 400"/>
-            </svg>
-        </div>
-        <div class="cover-tag">KPL EDITION</div>
-        <h1 class="cover-title">测测你和哪位<br>KPL选手最有缘</h1>
-        <p class="cover-subtitle">峡谷之巅，命运早已安排<br>10道题，测出你的灵魂羁绊</p>
-        <div class="cover-symbols">
-            <span>🎮</span>
-            <span>🏆</span>
-            <span>⚔️</span>
-            <span>👑</span>
-        </div>
-        <button class="btn-start" onclick="startQuiz()">开始测试</button>
-    </div>
+<script>
+const questions = [
+  {
+    text: "打游戏时你更享受哪种感觉？",
+    options: [
+      { text: "一个人在野外自由驰骋，掌控全场节奏", type: "jungle" },
+      { text: "团战时各种技能乱飞，手速拉满", type: "mid" },
+      { text: "默默发育，关键时刻一锤定音", type: "carry" },
+      { text: "和队友配合默契，丝血反杀", type: "support" }
+    ]
+  },
+  {
+    text: "你的性格更像哪一种？",
+    options: [
+      { text: "外向豪爽，天生的领导者", type: "jungle" },
+      { text: "冷静沉稳，凡事三思而后行", type: "mid" },
+      { text: "低调内敛，实力说话", type: "carry" },
+      { text: "温柔细腻，总是照顾别人的感受", type: "support" }
+    ]
+  },
+  {
+    text: "如果让你选一个超能力，你会选？",
+    options: [
+      { text: "瞬间移动，想去哪就去哪", type: "jungle" },
+      { text: "时间回溯，可以改正任何错误", type: "mid" },
+      { text: "绝对力量，一拳就能解决一切", type: "carry" },
+      { text: "读心术，了解每个人的想法", type: "support" }
+    ]
+  },
+  {
+    text: "周末你会怎么度过？",
+    options: [
+      { text: "约朋友出去嗨，KTV或者烧烤走起", type: "jungle" },
+      { text: "宅在家里看比赛或者追番", type: "mid" },
+      { text: "疯狂上分，冲个国服回来", type: "carry" },
+      { text: "陪家人或者做做美食", type: "support" }
+    ]
+  },
+  {
+    text: "和朋友组队开黑，你通常会？",
+    options: [
+      { text: "指挥全场，让大家跟着我的节奏走", type: "jungle" },
+      { text: "分析局势，告诉队友什么时候该打", type: "mid" },
+      { text: "闷头发育，打钱就完事了", type: "carry" },
+      { text: "配合队友，谁需要帮忙就去帮谁", type: "support" }
+    ]
+  },
+  {
+    text: "你更向往哪种人生剧本？",
+    options: [
+      { text: "逆风翻盘，从低谷登顶世界之巅", type: "wild" },
+      { text: "少年成名，出道即巅峰一路高歌", type: "talent" },
+      { text: "厚积薄发，默默磨砺终成大器", type: "steady" },
+      { text: "温暖治愈，成为所有人的光", type: "warm" }
+    ]
+  },
+  {
+    text: "面对挫折你的第一反应是？",
+    options: [
+      { text: "不服！再来一次肯定能行", type: "wild" },
+      { text: "冷静分析哪里出了问题", type: "steady" },
+      { text: "默默加倍努力，用实力证明自己", type: "talent" },
+      { text: "找朋友倾诉，有人陪着就不怕", type: "warm" }
+    ]
+  },
+  {
+    text: "如果你是KPL选手，你最想拿到什么荣誉？",
+    options: [
+      { text: "常规赛MVP，统治整个赛季", type: "talent" },
+      { text: "最佳中路，操作拉满全场焦点", type: "wild" },
+      { text: "总决赛FMVP，决胜局力挽狂澜", type: "steady" },
+      { text: "最佳辅助，默默付出无可替代", type: "warm" }
+    ]
+  }
+];
 
-    <!-- Quiz Page -->
-    <div class="page" id="quiz-page">
-        <div class="quiz-header">
-            <div class="quiz-progress">
-                <span class="quiz-progress-text" id="progress-text">1 / 10</span>
-                <div class="quiz-progress-bar">
-                    <div class="quiz-progress-fill" id="progress-fill" style="width: 10%"></div>
-                </div>
-            </div>
-        </div>
-        <div class="quiz-body" id="quiz-body">
-            <!-- Questions will be injected here -->
-        </div>
-    </div>
+const results = [
+  {
+    name: "一诺",
+    emoji: "🏹",
+    role: "发育路 / 射手",
+    team: "AG超玩会",
+    types: ["carry", "wild"],
+    desc: "你和一诺一样是一个充满激情的人！你们都有着不服输的精神和对胜利的渴望。他赛场上敢打敢拼的风格和你在生活中勇往直前的态度完美契合。你们在一起就像双C组合，注定闪耀全场！"
+  },
+  {
+    name: "Fly",
+    emoji: "👑",
+    role: "对抗路 / 坦克战士",
+    team: "重庆狼队",
+    types: ["jungle", "steady"],
+    desc: "你和Fly有着一样的王者之心！他是KPL最具传奇色彩的选手之一，从未缺席过任何一个总决赛舞台。他的坚持和稳定和你内心的坚定完美共鸣。你们的缘分就像他的关羽一样，一路驰骋势不可挡！"
+  },
+  {
+    name: "无畏",
+    emoji: "🦁",
+    role: "打野",
+    team: "南京Hero久竞",
+    types: ["jungle", "wild"],
+    desc: "你和无畏有着一样的热血！他从新人到FMVP的成长之路和你不服输的态度如出一辙。他是赛场上勇敢无畏的少年，你在生活中也总是充满勇气。你们的缘分就像他的韩信一样，势不可挡！"
+  },
+  {
+    name: "小胖",
+    emoji: "🐼",
+    role: "打野",
+    team: "重庆狼队",
+    types: ["jungle", "talent"],
+    desc: "你和狼队小胖有着奇妙的缘分！他是天生的节奏大师，打法凶悍又充满灵性。你们都有一股不服输的倔强，越挫越勇。你们的缘分就像他的澜一样，深邃又不可预测！"
+  },
+  {
+    name: "钎城",
+    emoji: "🎯",
+    role: "发育路 / 射手",
+    team: "长沙TES.A",
+    types: ["carry", "steady"],
+    desc: "你和钎城一样都是沉稳可靠的射手型选手！他赛场上的冷静精准和你在生活中的稳扎稳打完美契合。你们的缘分就像他的马可波罗一样，百发百中，招招致命！"
+  },
+  {
+    name: "清融",
+    emoji: "❄️",
+    role: "中路",
+    team: "武汉eStarPro",
+    types: ["mid", "talent"],
+    desc: "你和清融一样都是天赋异禀的实力派！你们都有一颗冷静又火热的心。赛场上他是中路最亮的星，生活中你也总能在关键时刻发光发热。你们的缘分就像他的貂蝉一样飘逸灵动，让人羡慕！"
+  },
+  {
+    name: "花海",
+    emoji: "🌊",
+    role: "打野",
+    team: "武汉eStarPro",
+    types: ["jungle", "warm"],
+    desc: "你和花海有着相同的温柔灵魂！他不仅是赛场的节奏大师，更是一个温暖细腻的人。他的大局观和你在生活中的包容力不谋而合。和你最有缘的花海，会像守护自己的野区一样守护你！"
+  },
+  {
+    name: "Cat",
+    emoji: "🐱",
+    role: "中路 / 教练",
+    team: "传奇指挥官",
+    types: ["mid", "steady"],
+    desc: "你和Cat一样都是电竞圈的传奇！他是KPL历史上最伟大的中路之一，从选手到教练始终散发着智慧的光芒。你和他都有着超强的分析能力和大局观。你们的缘分就像他的嬴政一样，运筹帷幄，决胜千里！"
+  },
+  {
+    name: "九尾",
+    emoji: "🦊",
+    role: "中路",
+    team: "广州TTG",
+    types: ["mid", "wild"],
+    desc: "你和九尾一样都是全场最靓的仔！他的法刺冠绝联盟，赛场上永远是最耀眼的焦点。你和他一样有着张扬的个性和超强的个人能力。你们的缘分就像他的不知火舞一样，华丽而致命！"
+  },
+  {
+    name: "清清",
+    emoji: "🌊",
+    role: "对抗路",
+    team: "广州TTG",
+    types: ["carry", "talent"],
+    desc: "你和清清一样都是天赋满满的选手！他赛场上操作细腻、对线能力极强。你和他都有着追求完美的态度和不服输的倔强。你们的缘分就像他的马超一样，一枪一个，干脆利落！"
+  },
+  {
+    name: "暖阳",
+    emoji: "☀️",
+    role: "打野",
+    team: "北京WB",
+    types: ["carry", "wild"],
+    desc: "你和暖阳有着同样炽热的灵魂！他是年少成名的天才打野，打法灵动多变。你和他一样对热爱的事物充满激情，敢想敢做。你们的缘分就像他的镜一样，分身万千，每一次相遇都是命中注定！"
+  }
+];
 
-    <!-- Analyzing Page -->
-    <div class="page" id="analyzing-page">
-        <div class="analyzing-icon">🔮</div>
-        <div class="analyzing-text">正在分析你的峡谷缘分...</div>
-        <div class="analyzing-progress">
-            <div class="analyzing-progress-fill" id="analyzing-fill"></div>
-        </div>
-    </div>
+let currentQ = 0;
+let scores = { jungle: 0, mid: 0, carry: 0, support: 0, wild: 0, talent: 0, steady: 0, warm: 0 };
 
-    <!-- Result Page -->
-    <div class="page" id="result-page">
-        <div class="result-card">
-            <div class="result-badge" id="result-badge"></div>
-            <div class="result-icon" id="result-icon"></div>
-            <h2 class="result-title" id="result-title"></h2>
-            <div class="result-rating" id="result-rating">
-                <div class="result-rating-label">适配指数</div>
-                <div class="result-rating-stars" id="result-stars"></div>
-            </div>
-            <div class="result-description" id="result-desc"></div>
-            <div class="result-quote" id="result-quote"></div>
-            <div class="result-actions">
-                <button class="btn-share" onclick="shareResult()">分享结果给队友</button>
-                <button class="btn-retry" onclick="retryQuiz()">再测一次</button>
-            </div>
-            <div class="disclaimer">
-                纯属娱乐，请勿当真<br>
-                本测试不涉及任何真实选手，所有内容均为虚构<br>
-                如有雷同，纯属巧合
-            </div>
-        </div>
-    </div>
+function startQuiz() {
+  currentQ = 0;
+  scores = { jungle: 0, mid: 0, carry: 0, support: 0, wild: 0, talent: 0, steady: 0, warm: 0 };
+  document.getElementById('startPage').style.display = 'none';
+  document.getElementById('resultPage').style.display = 'none';
+  document.getElementById('quizPage').style.display = 'block';
+  showQuestion();
+}
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+function showQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('progressFill').style.width = ((currentQ) / questions.length * 100) + '%';
+  document.getElementById('questionNum').textContent = `Q${currentQ + 1} / ${questions.length}`;
+  document.getElementById('questionText').textContent = q.text;
 
-    <script>
-        // ===== DATA =====
-        // 10 scores: [1-梦泪, 2-一诺, 3-花海, 4-清清, 5-久哲, 6-无畏, 7-狼队Fly, 8-暖阳, 9-妖刀, 10-子阳]
-        // 2 hidden: K-赛评体质, L-俱乐部老板
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
 
-        const questions = [
-            {
-                question: "你更喜欢哪个位置？",
-                options: [
-                    { letter: "A", main: "打野", desc: "节奏大师，掌控全局", score: [1,0,1,0,0,0,0,1,0,0] },
-                    { letter: "B", main: "射手", desc: "后排输出，Carry全场", score: [0,1,0,0,0,0,0,0,1,0] },
-                    { letter: "C", main: "对抗路", desc: "孤军奋战，单带之王", score: [0,0,0,1,0,0,1,0,0,0] },
-                    { letter: "D", main: "辅助", desc: "默默守护，团队之魂", score: [0,0,0,0,0,1,0,0,0,1] }
-                ]
-            },
-            {
-                question: "打游戏输了，你第一反应是？",
-                options: [
-                    { letter: "A", main: "默默复盘", desc: "找出每一个失误", score: [1,0,0,0,1,0,0,0,0,0] },
-                    { letter: "B", main: "发起下一局", desc: "输了就再来", score: [0,1,1,0,0,0,0,1,0,0] },
-                    { letter: "C", main: "疯狂打字复盘队友", desc: "激情教学", score: [0,0,0,0,1,0,1,0,1,0] },
-                    { letter: "D", main: "笑着说\"没事\"", desc: "心态就是强", score: [0,0,0,0,0,1,0,0,0,1] }
-                ]
-            },
-            {
-                question: "你理想的队友是什么类型？",
-                options: [
-                    { letter: "A", main: "永远冲在最前面的", desc: "开团型", score: [1,0,0,1,0,0,1,0,0,0] },
-                    { letter: "B", main: "稳得一批的", desc: "从不失误", score: [0,0,1,0,0,0,0,1,1,0] },
-                    { letter: "C", main: "会指挥的", desc: "大局观强", score: [0,0,0,0,1,0,1,0,0,0] },
-                    { letter: "D", main: "默默保你的", desc: "永远在身后", score: [0,0,0,0,0,1,0,0,0,1] }
-                ]
-            },
-            {
-                question: "比赛时你的心态是？",
-                options: [
-                    { letter: "A", main: "紧张到手抖", desc: "但关键时刻能爆发", score: [1,0,0,0,0,1,0,0,1,0] },
-                    { letter: "B", main: "绝对冷静", desc: "心态是第一武器", score: [0,0,1,0,1,0,0,1,0,0] },
-                    { letter: "C", main: "越打越兴奋", desc: "热血沸腾", score: [0,1,0,1,0,0,1,0,0,0] },
-                    { letter: "D", main: "佛系打法", desc: "随缘操作", score: [0,0,0,0,0,0,0,0,0,1] }
-                ]
-            },
-            {
-                question: "你最欣赏的电竞品质是？",
-                options: [
-                    { letter: "A", main: "逆风翻盘", desc: "永远不放弃", score: [1,0,0,0,0,0,1,0,0,0] },
-                    { letter: "B", main: "极致操作", desc: "每个细节都完美", score: [0,1,0,0,0,0,0,1,1,0] },
-                    { letter: "C", main: "大局观", desc: "永远比别人多想一步", score: [0,0,1,0,1,0,0,0,0,0] },
-                    { letter: "D", main: "团队配合", desc: "默契到不用说话", score: [0,0,0,0,0,1,0,0,0,1] }
-                ]
-            },
-            {
-                question: "如果让你选一个英雄上分，你选？",
-                options: [
-                    { letter: "A", main: "韩信/李白", desc: "飘逸刺客", score: [1,0,0,0,0,0,0,0,0,0] },
-                    { letter: "B", main: "公孙离/马可", desc: "秀到飞起", score: [0,1,0,0,0,0,0,0,1,0] },
-                    { letter: "C", main: "镜/澜", desc: "操作天花板", score: [0,0,1,0,0,0,0,1,0,0] },
-                    { letter: "D", main: "吕布/关羽", desc: "站撸之王", score: [0,0,0,1,0,0,1,0,0,0] }
-                ]
-            },
-            {
-                question: "看完比赛后你会？",
-                options: [
-                    { letter: "A", main: "刷十遍回放", desc: "研究每一个团战", score: [0,0,1,0,1,0,0,0,0,0] },
-                    { letter: "B", main: "去超话发小作文", desc: "激情赛后分析", score: [0,1,0,0,0,0,0,0,1,0] },
-                    { letter: "C", main: "自己开一局", desc: "被点燃了", score: [1,0,0,0,0,0,0,1,0,0] },
-                    { letter: "D", main: "默默截图", desc: "保存每一个名场面", score: [0,0,0,0,0,1,0,0,0,0] }
-                ]
-            },
-            {
-                question: "你觉得自己在团队里扮演什么角色？",
-                options: [
-                    { letter: "A", main: "队长", desc: "关键时刻站出来", score: [0,0,0,0,1,0,1,0,0,0] },
-                    { letter: "B", main: "开心果", desc: "调节气氛", score: [0,0,0,0,0,1,0,0,0,1] },
-                    { letter: "C", main: "安静输出位", desc: "不多话，只做事", score: [0,0,1,0,0,0,0,1,1,0] },
-                    { letter: "D", main: "精神支柱", desc: "稳住军心", score: [1,1,0,1,0,0,0,0,0,0] }
-                ]
-            },
-            {
-                question: "你最想和队友说什么？",
-                options: [
-                    { letter: "A", main: "\"我来了，先杀后排\"", desc: "", score: [1,0,0,0,0,0,1,0,0,0] },
-                    { letter: "B", main: "\"别慌，我C\"", desc: "", score: [0,1,0,0,0,0,0,0,1,0] },
-                    { letter: "C", main: "\"我保你，放心输出\"", desc: "", score: [0,0,0,0,0,1,0,0,0,1] },
-                    { letter: "D", main: "\"稳住，能赢\"", desc: "", score: [0,0,1,0,1,0,0,1,0,0] }
-                ]
-            },
-            {
-                question: "如果给你一个机会，你最想？",
-                options: [
-                    { letter: "A", main: "和选手一起开黑", desc: "被他带飞", score: [0,0,0,0,0,0,0,0,0,0] },
-                    { letter: "B", main: "坐在解说席上", desc: "专业点评", score: [0,0,0,0,0,0,0,0,0,0] },
-                    { letter: "C", main: "当一天选手", desc: "体验职业赛场", score: [1,0,1,0,0,0,0,1,0,0] },
-                    { letter: "D", main: "组建自己的战队", desc: "当老板", score: [0,0,0,0,1,0,1,0,0,0] }
-                ]
-            }
-        ];
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt.text}`;
+    btn.onclick = () => selectOption(opt.type);
+    container.appendChild(btn);
+  });
 
-        const results = {
-            '1': {
-                badge: "缘分解锁",
-                icon: "🗡️",
-                title: "你和 梦泪 最有缘",
-                subtitle: "一个韩信创造奇迹的人",
-                stars: "⭐⭐⭐⭐⭐",
-                ratingDesc: "默契指数：五颗星——逆风局的人生伴侣",
-                description: "你们之间的缘分在于——你们都相信"不可能"只是还没发生。他曾经用韩信偷家创造传奇，而你身上也有这种不到最后一刻绝不放弃的倔强。\n\n和他在一起，你永远不会觉得无聊，因为逆风翻盘的故事，每天都在上演。",
-                quote: "「只要水晶还在，就还有希望」"
-            },
-            '2': {
-                badge: "缘分解锁",
-                icon: "🏹",
-                title: "你和 一诺 最有缘",
-                subtitle: "AG之光，永远的神",
-                stars: "⭐⭐⭐⭐",
-                ratingDesc: "默契指数：四颗星——因为你们都有一颗冠军的心",
-                description: "你和他般配的地方是——你们都是那种默默努力、突然爆发的人。他不善言辞但实力说话，你也是那种不吵不闹但关键时刻总能让人刮目相看的类型。\n\n你们在一起就像一场教科书级别的团战，默契到不需要信号。",
-                quote: "「不用喊我C，我一直在C」"
-            },
-            '3': {
-                badge: "缘分解锁",
-                icon: "🌊",
-                title: "你和 花海 最有缘",
-                subtitle: "冷静的大脑，火热的手",
-                stars: "⭐⭐⭐⭐",
-                ratingDesc: "默契指数：四颗星——因为你们都有大局观",
-                description: "你们之间的缘分在于——你们都是"想太多"的人。他每一个决策都经过精密计算，你也习惯在行动前想好Plan B、C、D。\n\n你们在一起可能不是最浪漫的，但一定是最稳的。稳到让你安心。",
-                quote: "「不靠运气，靠实力」"
-            },
-            '4': {
-                badge: "缘分解锁",
-                icon: "🛡️",
-                title: "你和 清清 最有缘",
-                subtitle: "对抗路之王，孤胆英雄",
-                stars: "⭐⭐⭐",
-                ratingDesc: "默契指数：三颗星——因为你们都是独来独往的性格",
-                description: "你和他般配，是因为你们都享受孤独。他在对抗路一个人扛住压力，你也在生活中习惯一个人扛。\n\n你们在一起不需要太多甜言蜜语，一个眼神就够了——"我在，别怕"。",
-                quote: "「一个人也要是一条战线」"
-            },
-            '5': {
-                badge: "缘分解锁",
-                icon: "🧠",
-                title: "你和 久哲 最有缘",
-                subtitle: "最强大脑，战术大师",
-                stars: "⭐⭐⭐⭐⭐",
-                ratingDesc: "默契指数：五颗星——因为你总是被聪明人吸引",
-                description: "你和他之间的缘分在于——你崇拜有脑子的人。他不靠操作吃饭，靠的是超越常人的战术嗅觉和决策能力。\n\n和他在一起，你永远不会觉得"没意思"，因为他的脑回路总能给你惊喜。不过要做好心理准备：吵架的时候你可能吵不过他。",
-                quote: "「这不是莽，这叫计算好的冒险」"
-            },
-            '6': {
-                badge: "缘分解锁",
-                icon: "❤️",
-                title: "你和 无畏 最有缘",
-                subtitle: "温柔的人，最有力量的射手",
-                stars: "⭐⭐⭐⭐",
-                ratingDesc: "默契指数：四颗星——因为你值得被温柔对待",
-                description: "你们之间的缘分在于——他让你相信温柔也可以很强大。他是赛场上最暖的存在，就像你生活中最想遇到的那种人：不声不响，但永远在你需要的时候出现。\n\n和他在一起，安全感拉满。",
-                quote: "「我不是不说话，我只是在想你」"
-            },
-            '7': {
-                badge: "缘分解锁",
-                icon: "🐺",
-                title: "你和 Fly 最有缘",
-                subtitle: "狼队精神图腾，永不倒下的战士",
-                stars: "⭐⭐⭐⭐⭐",
-                ratingDesc: "默契指数：五颗星——因为你们都是越挫越勇的人",
-                description: "你和他之间的缘分在于——你们都是那种"打不死"的类型。从Hero到狼队，他经历了很多，但从来没有人见过他放弃。你也一样，生活给你多少巴掌，你都笑着站起来。\n\n你们在一起，就是最强的战线。",
-                quote: "「我不是不累，我只是不想让你们看到」"
-            },
-            '8': {
-                badge: "缘分解锁",
-                icon: "☀️",
-                title: "你和 暖阳 最有缘",
-                subtitle: "暖阳照进峡谷，也照进你心里",
-                stars: "⭐⭐⭐⭐",
-                ratingDesc: "默契指数：四颗星——因为你们都温暖且低调",
-                description: "你和他之间的缘分在于——你们都是那种安静但闪光的类型。他不争不抢但实力在线，你也从不炫耀但内心强大。\n\n你们在一起就像一场温水煮青蛙——不知不觉中，他就成了你最重要的人。",
-                quote: "「不用多说，打给你看」"
-            },
-            '9': {
-                badge: "缘分解锁",
-                icon: "🔪",
-                title: "你和 妖刀 最有缘",
-                subtitle: "刀锋所指，所向披靡",
-                stars: "⭐⭐⭐",
-                ratingDesc: "默契指数：三颗星——因为你们都太锋芒毕露",
-                description: "你和他之间的缘分在于——你们都是"有态度"的人。他的操作犀利且充满侵略性，你也是那种敢爱敢恨、说话直来直去的性格。\n\n你们在一起，注定不平凡。但也容易吵起来——因为两个有态度的人，谁都不愿意先低头。",
-                quote: "「我的刀，只给值得的人」"
-            },
-            '10': {
-                badge: "缘分解锁",
-                icon: "🌿",
-                title: "你和 子阳 最有缘",
-                subtitle: "最好的辅助，永远在你身后",
-                stars: "⭐⭐⭐⭐",
-                ratingDesc: "默契指数：四颗星——因为你值得被守护",
-                description: "你和他之间的缘分在于——你骨子里渴望被偏爱。他是那种默默在身后保护你的人，不会说漂亮话，但每一次你需要的时候，他都在。\n\n和他在一起，你永远不是一个人在战斗。他是你的辅助，也是你最强的后盾。",
-                quote: "「你负责C，我负责活」"
-            },
-            'K': {
-                badge: "🎁 隐藏款解锁 🎁",
-                icon: "🎙️",
-                title: "赛评体质",
-                subtitle: "你不是来打游戏的，你是来当解说的",
-                stars: "🎙️",
-                ratingDesc: "默契指数：给你一个话筒，KPL解说席见",
-                description: "恭喜你！你抽中了"幕后大佬"隐藏款。你的天赋不在操作上，而在嘴上——别人打游戏靠手，你打游戏靠嘴。\n\n每一场比赛你都能精准点评，每一个失误你都看得一清二楚。建议你投简历给KPL官方解说团队，你的下一站，是解说席。",
-                quote: "「你的KPI不是段位，是弹幕数量」"
-            },
-            'L': {
-                badge: "🌟 真·彩蛋款 🌟",
-                icon: "💼",
-                title: "俱乐部老板",
-                subtitle: "你不是来打比赛的，你是来买队的",
-                stars: "💼",
-                ratingDesc: "默契指数：给你一张银行卡，冠军买给你",
-                description: "恭喜你抽中"终极boss"限定款！你和KPL的关系不是选手和粉丝，而是老板和员工。\n\n别人追星买周边，你追星直接买俱乐部。你对阵容的理解比教练还深，对选手的期望比亲妈还高。建议你先看看银行卡余额，因为养一个冠军战队，不便宜。",
-                quote: "「别人研究BP，你研究工资单」"
-            }
-        };
+  // 重新触发动画
+  const quizPage = document.getElementById('quizPage');
+  quizPage.style.animation = 'none';
+  quizPage.offsetHeight;
+  quizPage.style.animation = 'fadeUp 0.4s ease';
+}
 
-        // ===== STATE =====
-        let currentQuestion = 0;
-        let answers = [];
-        let scores = new Array(10).fill(0);
+function selectOption(type) {
+  scores[type]++;
 
-        // ===== INIT =====
-        function init() {
-            createParticles();
-            simulateLoading();
-            renderQuestions();
-        }
+  currentQ++;
+  if (currentQ < questions.length) {
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
 
-        function simulateLoading() {
-            const fill = document.getElementById('loading-fill');
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 25 + 10;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('loading-screen').classList.add('hidden');
-                        showPage('cover-page');
-                    }, 300);
-                }
-                fill.style.width = progress + '%';
-            }, 200);
-        }
+function showResult() {
+  document.getElementById('quizPage').style.display = 'none';
+  document.getElementById('resultPage').style.display = 'block';
 
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
-                container.appendChild(particle);
-            }
-        }
+  // 找到得分最高的类型
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const topType = sorted[0][0];
+  const secondType = sorted[1][0];
 
-        function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-        }
+  // 匹配结果：优先匹配两个类型都一致的，再匹配包含topType的
+  let matched = results.find(r => r.types[0] === topType && r.types[1] === secondType)
+    || results.find(r => r.types.includes(topType) && r.types.includes(secondType))
+    || results.find(r => r.types.includes(topType))
+    || results[0];
 
-        // ===== QUIZ LOGIC =====
-        function renderQuestions() {
-            const body = document.getElementById('quiz-body');
-            body.innerHTML = questions.map((q, qi) => `
-                <div class="quiz-question ${qi === 0 ? 'active' : ''}" data-index="${qi}">
-                    <div class="quiz-question-num">QUESTION ${String(qi + 1).padStart(2, '0')}</div>
-                    <div class="quiz-question-text">${q.question}</div>
-                    <div class="quiz-options">
-                        ${q.options.map((opt, oi) => `
-                            <div class="quiz-option" onclick="selectOption(${qi}, ${oi})">
-                                <div class="option-letter">${opt.letter}</div>
-                                <div class="option-content">
-                                    <div class="option-main">${opt.main}</div>
-                                    ${opt.desc ? `<div class="option-desc">"${opt.desc}"</div>` : ''}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-        }
+  // 计算缘分分数
+  const totalScore = sorted[0][1] + sorted[1][1];
+  const matchScore = Math.min(99, Math.max(75, totalScore * 12 + Math.floor(Math.random() * 8)));
 
-        function selectOption(questionIndex, optionIndex) {
-            const question = questions[questionIndex];
-            const option = question.options[optionIndex];
+  document.getElementById('resultAvatar').textContent = matched.emoji;
+  document.getElementById('resultName').textContent = matched.name;
+  document.getElementById('resultRole').textContent = matched.role;
+  document.getElementById('resultDesc').textContent = matched.desc;
 
-            const questionEl = document.querySelectorAll('.quiz-question')[questionIndex];
-            questionEl.querySelectorAll('.quiz-option').forEach((el, i) => {
-                el.classList.toggle('selected', i === optionIndex);
-            });
+  // 数字滚动效果
+  const scoreEl = document.getElementById('resultScore');
+  let cur = 0;
+  const target = matchScore;
+  const step = Math.ceil(target / 30);
+  const timer = setInterval(() => {
+    cur += step;
+    if (cur >= target) { cur = target; clearInterval(timer); }
+    scoreEl.textContent = cur;
+  }, 30);
 
-            answers[questionIndex] = optionIndex;
-            option.score.forEach((s, i) => {
-                scores[i] += s;
-            });
+  document.getElementById('progressFill').style.width = '100%';
+}
 
-            setTimeout(() => {
-                if (questionIndex < questions.length - 1) {
-                    currentQuestion = questionIndex + 1;
-                    showQuestion(currentQuestion);
-                } else {
-                    finishQuiz();
-                }
-            }, 400);
-        }
+function restartQuiz() {
+  document.getElementById('resultPage').style.display = 'none';
+  document.getElementById('startPage').style.display = 'block';
+  // 重置动画
+  const startPage = document.getElementById('startPage');
+  startPage.style.animation = 'none';
+  startPage.offsetHeight;
+  startPage.style.animation = 'fadeUp 0.8s ease';
+}
+</script>
 
-        function showQuestion(index) {
-            const allQuestions = document.querySelectorAll('.quiz-question');
-            allQuestions.forEach(q => q.classList.remove('active'));
-            allQuestions[index].classList.add('active');
-            document.getElementById('progress-text').textContent = `${index + 1} / ${questions.length}`;
-            document.getElementById('progress-fill').style.width = `${((index + 1) / questions.length) * 100}%`;
-        }
-
-        function startQuiz() {
-            currentQuestion = 0;
-            answers = [];
-            scores = new Array(10).fill(0);
-            showPage('quiz-page');
-            showQuestion(0);
-        }
-
-        function finishQuiz() {
-            showPage('analyzing-page');
-            animateAnalyzing();
-        }
-
-        function animateAnalyzing() {
-            const fill = document.getElementById('analyzing-fill');
-            let progress = 0;
-            const texts = ['正在分析你的峡谷选择...', '正在匹配KPL选手数据库...', '正在计算羁绊值...', '正在生成专属缘分...'];
-            const textEl = document.querySelector('.analyzing-text');
-            let textIndex = 0;
-
-            const interval = setInterval(() => {
-                progress += Math.random() * 3 + 1;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        const resultType = calculateResult();
-                        showResult(resultType);
-                    }, 400);
-                }
-                fill.style.width = progress + '%';
-
-                const newTextIndex = Math.min(Math.floor(progress / 25), texts.length - 1);
-                if (newTextIndex !== textIndex) {
-                    textIndex = newTextIndex;
-                    textEl.style.opacity = 0;
-                    setTimeout(() => {
-                        textEl.textContent = texts[textIndex];
-                        textEl.style.opacity = 1;
-                    }, 200);
-                }
-            }, 60);
-        }
-
-        function calculateResult() {
-            // K: hidden - chose "analysis/critique" style options frequently (option B in Q7=1)
-            const critiquePattern = [0, 2, 0, 0, 0, 0, 1, 0, 0, 0];
-            const critiqueScore = answers.reduce((acc, a, i) => acc + (a === critiquePattern[i] ? 1 : 0), 0);
-            if (critiqueScore >= 4) return 'K';
-
-            // L: hidden - chose "leadership/boss" style options
-            const bossPattern = [0, 2, 2, 1, 2, 0, 0, 0, 0, 3];
-            const bossScore = answers.reduce((acc, a, i) => acc + (a === bossPattern[i] ? 1 : 0), 0);
-            if (bossScore >= 4) return 'L';
-
-            // Normal: pick highest score
-            const max = Math.max(...scores);
-            const maxIndex = scores.indexOf(max);
-            return String(maxIndex + 1);
-        }
-
-        function showResult(type) {
-            const result = results[type];
-            if (!result) return;
-
-            document.getElementById('result-badge').textContent = result.badge;
-            document.getElementById('result-icon').textContent = result.icon;
-            document.getElementById('result-title').textContent = result.title;
-            document.getElementById('result-stars').textContent = result.stars;
-            document.getElementById('result-desc').textContent = result.description;
-            document.getElementById('result-quote').textContent = result.quote;
-            document.getElementById('result-rating').querySelector('.result-rating-label').textContent = result.ratingDesc;
-
-            let subtitleEl = document.getElementById('result-subtitle');
-            if (!subtitleEl) {
-                subtitleEl = document.createElement('div');
-                subtitleEl.id = 'result-subtitle';
-                subtitleEl.style.cssText = 'font-size:0.85rem;color:var(--gold);margin-bottom:1.5rem;letter-spacing:0.05em;';
-                document.getElementById('result-title').after(subtitleEl);
-            }
-            subtitleEl.textContent = result.subtitle || '';
-
-            showPage('result-page');
-        }
-
-        function retryQuiz() {
-            startQuiz();
-        }
-
-        function shareResult() {
-            const title = document.getElementById('result-title').textContent;
-            const icon = document.getElementById('result-icon').textContent;
-
-            if (navigator.share) {
-                navigator.share({
-                    title: '测测你和哪位KPL选手最有缘',
-                    text: `我测出来是「${icon} ${title}」，你呢？峡谷见 🎮`,
-                    url: window.location.href
-                }).catch(() => {});
-            } else {
-                const text = `我测出来是「${icon} ${title}」，你呢？峡谷见 🎮`;
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('结果已复制，快去分享给队友吧 ✨');
-                }).catch(() => {
-                    showToast('长按复制链接分享给队友');
-                });
-            }
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        // ===== START =====
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
 </body>
 </html>
