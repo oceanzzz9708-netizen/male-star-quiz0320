@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>测测你和哪位男明星最般配 </title>
-    <meta name="description" content="懂的都懂，不懂的别问。纯属娱乐，请勿对号入座。">
+    <title>测测你和哪位KPL选手最有缘</title>
+    <meta name="description" content="10道题测出你的KPL灵魂伴侣。纯属娱乐，请勿当真。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -389,13 +389,7 @@
             font-size: 1.6rem;
             font-weight: 900;
             line-height: 1.4;
-            margin-bottom: 0.5rem;
-        }
-        .result-subtitle {
-            font-size: 0.85rem;
-            color: var(--gold);
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
         }
         .result-rating {
             display: inline-block;
@@ -425,7 +419,6 @@
             border-radius: 12px;
             border-left: 2px solid var(--red);
             margin-bottom: 2rem;
-            white-space: pre-line;
         }
         .result-quote {
             font-family: 'Noto Serif SC', serif;
@@ -584,7 +577,7 @@
 
     <!-- Loading Screen -->
     <div id="loading-screen">
-        <div class="loading-text">命运加载中</div>
+        <div class="loading-text">缘分加载中</div>
         <div class="loading-bar">
             <div class="loading-bar-fill" id="loading-fill"></div>
         </div>
@@ -599,14 +592,14 @@
                 <path d="M60 400 Q60 200 150 170 Q240 200 240 400"/>
             </svg>
         </div>
-        <div class="cover-tag">ABSTRACT EDITION</div>
-        <h1 class="cover-title">测测你和哪位<br>男明星最般配</h1>
-        <p class="cover-subtitle">懂的都懂，不懂的别问<br>10道题，测出你的抽象缘分</p>
+        <div class="cover-tag">KPL EDITION</div>
+        <h1 class="cover-title">测测你和哪位<br>KPL选手最有缘</h1>
+        <p class="cover-subtitle">峡谷之巅，命运早已安排<br>10道题，测出你的灵魂羁绊</p>
         <div class="cover-symbols">
-            <span>🎹</span>
-            <span>📷</span>
-            <span>📱</span>
-            <span>⏰</span>
+            <span>🎮</span>
+            <span>🏆</span>
+            <span>⚔️</span>
+            <span>👑</span>
         </div>
         <button class="btn-start" onclick="startQuiz()">开始测试</button>
     </div>
@@ -629,7 +622,7 @@
     <!-- Analyzing Page -->
     <div class="page" id="analyzing-page">
         <div class="analyzing-icon">🔮</div>
-        <div class="analyzing-text">正在为你解析命运...</div>
+        <div class="analyzing-text">正在分析你的峡谷缘分...</div>
         <div class="analyzing-progress">
             <div class="analyzing-progress-fill" id="analyzing-fill"></div>
         </div>
@@ -641,7 +634,6 @@
             <div class="result-badge" id="result-badge"></div>
             <div class="result-icon" id="result-icon"></div>
             <h2 class="result-title" id="result-title"></h2>
-            <div class="result-subtitle" id="result-subtitle"></div>
             <div class="result-rating" id="result-rating">
                 <div class="result-rating-label">适配指数</div>
                 <div class="result-rating-stars" id="result-stars"></div>
@@ -649,12 +641,12 @@
             <div class="result-description" id="result-desc"></div>
             <div class="result-quote" id="result-quote"></div>
             <div class="result-actions">
-                <button class="btn-share" onclick="shareResult()">分享结果给闺蜜</button>
+                <button class="btn-share" onclick="shareResult()">分享结果给队友</button>
                 <button class="btn-retry" onclick="retryQuiz()">再测一次</button>
             </div>
             <div class="disclaimer">
-                纯属娱乐，请勿对号入座<br>
-                本测试不涉及任何真实人物，所有内容均为虚构<br>
+                纯属娱乐，请勿当真<br>
+                本测试不涉及任何真实选手，所有内容均为虚构<br>
                 如有雷同，纯属巧合
             </div>
         </div>
@@ -665,222 +657,222 @@
 
     <script>
         // ===== DATA =====
-        // 10 scores: [1-法制咖, 2-求佛者, 3-摄影师08, 4-双标侠, 5-PPT之神, 6-钢琴王子, 7-学霸人设, 8-顶流幸存者, 9-哑巴新郎, 10-为爱退圈]
-        // 2 hidden: K-爆料体质, L-朝阳群众
+        // 10 scores: [1-梦泪, 2-一诺, 3-花海, 4-清清, 5-久哲, 6-无畏, 7-狼队Fly, 8-暖阳, 9-妖刀, 10-子阳]
+        // 2 hidden: K-赛评体质, L-俱乐部老板
 
         const questions = [
             {
-                question: "周末约会，他提议去哪里？",
+                question: "你更喜欢哪个位置？",
                 options: [
-                    { letter: "A", main: "私人影院", desc: "说\"人少安静\"", score: [1,0,1,0,0,0,0,0,0,0] },
-                    { letter: "B", main: "寺庙烧香", desc: "说\"最近需要祈福\"", score: [0,1,0,0,0,0,0,0,0,0] },
-                    { letter: "C", main: "音乐厅", desc: "说\"带你听肖邦\"", score: [0,0,0,0,0,1,0,0,0,0] },
-                    { letter: "D", main: "家里打游戏", desc: "说\"带你上分\"", score: [0,0,0,0,0,0,0,0,1,0] }
+                    { letter: "A", main: "打野", desc: "节奏大师，掌控全局", score: [1,0,1,0,0,0,0,1,0,0] },
+                    { letter: "B", main: "射手", desc: "后排输出，Carry全场", score: [0,1,0,0,0,0,0,0,1,0] },
+                    { letter: "C", main: "对抗路", desc: "孤军奋战，单带之王", score: [0,0,0,1,0,0,1,0,0,0] },
+                    { letter: "D", main: "辅助", desc: "默默守护，团队之魂", score: [0,0,0,0,0,1,0,0,0,1] }
                 ]
             },
             {
-                question: "他手机坏了，第一反应是？",
+                question: "打游戏输了，你第一反应是？",
                 options: [
-                    { letter: "A", main: "发微博吐槽", desc: "让品牌方看到", score: [0,0,0,1,0,0,0,0,0,0] },
-                    { letter: "B", main: "找个手机店找小哥修", desc: "还要养鱼没空等", score: [0,0,0,1,0,0,0,0,0,0] },
-                    { letter: "C", main: "去旗舰店买个新的", desc: "简单粗暴", score: [0,0,0,0,0,0,1,0,0,0] },
-                    { letter: "D", main: "假装没坏", desc: "反正也不怎么看手机", score: [0,0,0,0,0,0,0,0,1,0] }
+                    { letter: "A", main: "默默复盘", desc: "找出每一个失误", score: [1,0,0,0,1,0,0,0,0,0] },
+                    { letter: "B", main: "发起下一局", desc: "输了就再来", score: [0,1,1,0,0,0,0,1,0,0] },
+                    { letter: "C", main: "疯狂打字复盘队友", desc: "激情教学", score: [0,0,0,0,1,0,1,0,1,0] },
+                    { letter: "D", main: "笑着说\"没事\"", desc: "心态就是强", score: [0,0,0,0,0,1,0,0,0,1] }
                 ]
             },
             {
-                question: "他发了一条朋友圈\"今晚有约\"，配图是？",
+                question: "你理想的队友是什么类型？",
                 options: [
-                    { letter: "A", main: "一杯红酒+昏暗灯光", desc: "", score: [1,0,1,0,0,0,0,0,0,0] },
-                    { letter: "B", main: "一张PPT截图", desc: "标题是\"我们的回忆\"", score: [0,0,0,0,1,0,0,0,0,0] },
-                    { letter: "C", main: "钢琴键盘一角", desc: "", score: [0,0,0,0,0,1,0,0,0,0] },
-                    { letter: "D", main: "和女朋友的合照", desc: "毫不掩饰", score: [0,0,0,0,0,0,0,1,0,1] }
+                    { letter: "A", main: "永远冲在最前面的", desc: "开团型", score: [1,0,0,1,0,0,1,0,0,0] },
+                    { letter: "B", main: "稳得一批的", desc: "从不失误", score: [0,0,1,0,0,0,0,1,1,0] },
+                    { letter: "C", main: "会指挥的", desc: "大局观强", score: [0,0,0,0,1,0,1,0,0,0] },
+                    { letter: "D", main: "默默保你的", desc: "永远在身后", score: [0,0,0,0,0,1,0,0,0,1] }
                 ]
             },
             {
-                question: "吵架后他怎么道歉？",
+                question: "比赛时你的心态是？",
                 options: [
-                    { letter: "A", main: "写小作文", desc: "声情并茂但没啥诚意", score: [0,0,0,1,0,0,0,0,0,0] },
-                    { letter: "B", main: "做个PPT", desc: "逐条分析图文并茂", score: [0,0,0,0,1,0,0,0,0,0] },
-                    { letter: "C", main: "沉默", desc: "一句话不说", score: [0,0,0,0,0,0,0,0,1,0] },
-                    { letter: "D", main: "微博公开道歉", desc: "微博置顶，大方承认", score: [0,0,0,1,0,0,0,1,0,0] }
+                    { letter: "A", main: "紧张到手抖", desc: "但关键时刻能爆发", score: [1,0,0,0,0,1,0,0,1,0] },
+                    { letter: "B", main: "绝对冷静", desc: "心态是第一武器", score: [0,0,1,0,1,0,0,1,0,0] },
+                    { letter: "C", main: "越打越兴奋", desc: "热血沸腾", score: [0,1,0,1,0,0,1,0,0,0] },
+                    { letter: "D", main: "佛系打法", desc: "随缘操作", score: [0,0,0,0,0,0,0,0,0,1] }
                 ]
             },
             {
-                question: "他突然说\"我想消失一段时间\"，你觉得是？",
+                question: "你最欣赏的电竞品质是？",
                 options: [
-                    { letter: "A", main: "要被带走调查了", desc: "", score: [1,1,0,0,0,1,0,0,0,0] },
-                    { letter: "B", main: "要去古庙修行", desc: "", score: [0,1,0,0,0,0,0,0,0,0] },
-                    { letter: "C", main: "要退圈了", desc: "为了爱情", score: [0,0,0,0,0,0,0,0,0,1] },
-                    { letter: "D", main: "要出国巡演", desc: "", score: [0,0,0,0,0,1,0,0,0,0] }
+                    { letter: "A", main: "逆风翻盘", desc: "永远不放弃", score: [1,0,0,0,0,0,1,0,0,0] },
+                    { letter: "B", main: "极致操作", desc: "每个细节都完美", score: [0,1,0,0,0,0,0,1,1,0] },
+                    { letter: "C", main: "大局观", desc: "永远比别人多想一步", score: [0,0,1,0,1,0,0,0,0,0] },
+                    { letter: "D", main: "团队配合", desc: "默契到不用说话", score: [0,0,0,0,0,1,0,0,0,1] }
                 ]
             },
             {
-                question: "他最喜欢收藏什么？",
+                question: "如果让你选一个英雄上分，你选？",
                 options: [
-                    { letter: "A", main: "限量版球鞋+奢侈品", desc: "", score: [1,0,1,1,0,0,0,0,0,0] },
-                    { letter: "B", main: "各种相机", desc: "不同型号都要", score: [0,0,1,0,0,0,0,0,0,0] },
-                    { letter: "C", main: "钢琴谱手稿", desc: "", score: [0,0,0,0,0,1,0,0,0,0] },
-                    { letter: "D", main: "演唱会门票", desc: "每一场都留着", score: [0,0,0,0,1,0,0,0,0,0] }
+                    { letter: "A", main: "韩信/李白", desc: "飘逸刺客", score: [1,0,0,0,0,0,0,0,0,0] },
+                    { letter: "B", main: "公孙离/马可", desc: "秀到飞起", score: [0,1,0,0,0,0,0,0,1,0] },
+                    { letter: "C", main: "镜/澜", desc: "操作天花板", score: [0,0,1,0,0,0,0,1,0,0] },
+                    { letter: "D", main: "吕布/关羽", desc: "站撸之王", score: [0,0,0,1,0,0,1,0,0,0] }
                 ]
             },
             {
-                question: "半夜三点他给你发消息，内容是？",
+                question: "看完比赛后你会？",
                 options: [
-                    { letter: "A", main: "\"睡了吗？\"过来玩", desc: "", score: [1,0,1,0,0,0,0,0,0,0] },
-                    { letter: "B", main: "一首他自己唱的歌", desc: "", score: [0,0,0,0,1,1,0,0,0,0] },
-                    { letter: "C", main: "一张今天的自拍", desc: "但只露半个脸", score: [0,0,0,1,0,0,0,0,0,0] },
-                    { letter: "D", main: "\"在想你\"三个字", desc: "简单直接", score: [0,0,0,0,0,0,0,1,0,0] }
+                    { letter: "A", main: "刷十遍回放", desc: "研究每一个团战", score: [0,0,1,0,1,0,0,0,0,0] },
+                    { letter: "B", main: "去超话发小作文", desc: "激情赛后分析", score: [0,1,0,0,0,0,0,0,1,0] },
+                    { letter: "C", main: "自己开一局", desc: "被点燃了", score: [1,0,0,0,0,0,0,1,0,0] },
+                    { letter: "D", main: "默默截图", desc: "保存每一个名场面", score: [0,0,0,0,0,1,0,0,0,0] }
                 ]
             },
             {
-                question: "他被朋友爆料\"私底下其实很……\"",
+                question: "你觉得自己在团队里扮演什么角色？",
                 options: [
-                    { letter: "A", main: "爱选妃，要求还很高", desc: "", score: [1,0,0,0,0,0,0,0,0,0] },
-                    { letter: "B", main: "说话不过脑子", desc: "一张嘴就翻车", score: [0,0,0,0,0,0,1,0,0,0] },
-                    { letter: "C", main: "特别深沉爱聊哲学", desc: "", score: [0,0,0,0,0,1,0,0,0,0] },
-                    { letter: "D", main: "特别暖，但对所有人", desc: "", score: [0,0,0,0,0,0,0,1,0,0] }
+                    { letter: "A", main: "队长", desc: "关键时刻站出来", score: [0,0,0,0,1,0,1,0,0,0] },
+                    { letter: "B", main: "开心果", desc: "调节气氛", score: [0,0,0,0,0,1,0,0,0,1] },
+                    { letter: "C", main: "安静输出位", desc: "不多话，只做事", score: [0,0,1,0,0,0,0,1,1,0] },
+                    { letter: "D", main: "精神支柱", desc: "稳住军心", score: [1,1,0,1,0,0,0,0,0,0] }
                 ]
             },
             {
-                question: "你们第一次约会，他穿的是？",
+                question: "你最想和队友说什么？",
                 options: [
-                    { letter: "A", main: "全套奢侈品", desc: "恨不得把logo穿身上", score: [1,1,0,1,0,0,0,0,0,0] },
-                    { letter: "B", main: "西装三件套", desc: "像要去开演唱会", score: [0,0,0,0,1,1,0,0,0,0] },
-                    { letter: "C", main: "休闲卫衣", desc: "戴个帽子就出门", score: [0,0,0,0,0,0,1,0,1,0] },
-                    { letter: "D", main: "情侣装", desc: "直接昭告天下", score: [0,0,0,0,0,0,0,1,0,1] }
+                    { letter: "A", main: "\"我来了，先杀后排\"", desc: "", score: [1,0,0,0,0,0,1,0,0,0] },
+                    { letter: "B", main: "\"别慌，我C\"", desc: "", score: [0,1,0,0,0,0,0,0,1,0] },
+                    { letter: "C", main: "\"我保你，放心输出\"", desc: "", score: [0,0,0,0,0,1,0,0,0,1] },
+                    { letter: "D", main: "\"稳住，能赢\"", desc: "", score: [0,0,1,0,1,0,0,1,0,0] }
                 ]
             },
             {
-                question: "他发了一条微博只写\"抱歉\"，你觉得是为什么？",
+                question: "如果给你一个机会，你最想？",
                 options: [
-                    { letter: "A", main: "进去了", desc: "字少事大", score: [1,1,0,0,0,1,0,0,0,0] },
-                    { letter: "B", main: "又出轨了", desc: "第N次", score: [0,0,0,0,1,0,0,0,0,0] },
-                    { letter: "C", main: "说了不该说的话", desc: "又翻车了", score: [0,0,0,0,0,0,1,0,0,0] },
-                    { letter: "D", main: "退圈声明", desc: "要为爱隐退", score: [0,0,0,0,0,0,0,0,0,1] }
+                    { letter: "A", main: "和选手一起开黑", desc: "被他带飞", score: [0,0,0,0,0,0,0,0,0,0] },
+                    { letter: "B", main: "坐在解说席上", desc: "专业点评", score: [0,0,0,0,0,0,0,0,0,0] },
+                    { letter: "C", main: "当一天选手", desc: "体验职业赛场", score: [1,0,1,0,0,0,0,1,0,0] },
+                    { letter: "D", main: "组建自己的战队", desc: "当老板", score: [0,0,0,0,1,0,1,0,0,0] }
                 ]
             }
         ];
 
         const results = {
             '1': {
-                badge: "命运解锁",
-                icon: "⚖️",
-                title: "你的真命天子：吴亦凡",
-                subtitle: "恋爱体验：包吃包住",
-                stars: "⭐⭐",
-                ratingDesc: "适配指数：两颗星——因为两颗星是手铐的圈数",
-                description: "你和他般配的地方是——你有\"救世主情结\"，总觉得他能为你改变。但姐妹醒醒，他现在真的在\"改造\"，不过是国家帮你改造的。\n\n建议你去探监的时候问问：当年选妃的标准，你符合几条？",
-                quote: "「当年问'你有freestyle吗'，现在问'你有牢饭吗'」"
+                badge: "缘分解锁",
+                icon: "🗡️",
+                title: "你和 梦泪 最有缘",
+                subtitle: "一个韩信创造奇迹的人",
+                stars: "⭐⭐⭐⭐⭐",
+                ratingDesc: "默契指数：五颗星——逆风局的人生伴侣",
+                description: "你们之间的缘分在于——你们都相信"不可能"只是还没发生。他曾经用韩信偷家创造传奇，而你身上也有这种不到最后一刻绝不放弃的倔强。\n\n和他在一起，你永远不会觉得无聊，因为逆风翻盘的故事，每天都在上演。",
+                quote: "「只要水晶还在，就还有希望」"
             },
             '2': {
-                badge: "命运解锁",
-                icon: "🙏",
-                title: "你的真命天子：李易峰",
-                subtitle: "恋爱体验：大孤山VIP年卡",
-                stars: "⭐",
-                ratingDesc: "适配指数：一颗星——因为剩下的星星都掉进功德箱了",
-                description: "你的男人从荧幕上的英雄，变成了大孤山古庙的求佛者。他为了复出四处求人，欠债5000万，去泰国开演唱会还要你买3500的VIP票。\n\n和他在一起，你得准备好：钱给他还债，命陪他跪拜，最后还要听他念叨\"欧凯\"。",
-                quote: "「当年在荧幕上演革命者，现在在古庙里演求佛者」"
+                badge: "缘分解锁",
+                icon: "🏹",
+                title: "你和 一诺 最有缘",
+                subtitle: "AG之光，永远的神",
+                stars: "⭐⭐⭐⭐",
+                ratingDesc: "默契指数：四颗星——因为你们都有一颗冠军的心",
+                description: "你和他般配的地方是——你们都是那种默默努力、突然爆发的人。他不善言辞但实力说话，你也是那种不吵不闹但关键时刻总能让人刮目相看的类型。\n\n你们在一起就像一场教科书级别的团战，默契到不需要信号。",
+                quote: "「不用喊我C，我一直在C」"
             },
             '3': {
-                badge: "命运解锁",
-                icon: "📸",
-                title: "你的真命天子：陈冠希",
-                subtitle: "恋爱体验：随时准备社死",
-                stars: "⭐⭐⭐",
-                ratingDesc: "适配指数：三颗星——多一颗给颜值",
-                description: "你爱上的是他的痞帅，但他给你的可能是\"全网可见\"。那场风波，受害的是女明星，背锅的是他，但拍照的是谁？是他。\n\n如果你和他在一起，建议提前做好心理准备：你们的私密时刻，可能不是两个人的事。",
-                quote: "「有些人拍照是记录生活，有些人拍照是改变人生」"
+                badge: "缘分解锁",
+                icon: "🌊",
+                title: "你和 花海 最有缘",
+                subtitle: "冷静的大脑，火热的手",
+                stars: "⭐⭐⭐⭐",
+                ratingDesc: "默契指数：四颗星——因为你们都有大局观",
+                description: "你们之间的缘分在于——你们都是"想太多"的人。他每一个决策都经过精密计算，你也习惯在行动前想好Plan B、C、D。\n\n你们在一起可能不是最浪漫的，但一定是最稳的。稳到让你安心。",
+                quote: "「不靠运气，靠实力」"
             },
             '4': {
-                badge: "命运解锁",
-                icon: "💢",
-                title: "你的真命天子：王力宏",
-                subtitle: "恋爱体验：你捐款，他享受",
-                stars: "⭐⭐",
-                ratingDesc: "两颗星，因为第三颗在律师函里",
-                description: "你喜欢的是那种“看起来什么都对”的男人——高学历、好家世、完美的公众形象。他唱过“唯一”，你也以为你是他的唯一。但姐妹，有些“优质偶像”，私下里可能是另一套剧本。当他的家人开始写小作文、前妻开始放锤的时候，你才发现：原来完美的背后，是另一场“大和解”。和他在一起，你要准备好：恋爱谈得像开董事会，分手得像打官司。建议你提前找好律师，因为你们的爱情，可能需要用调解书来证明。",
-                quote: "「别人翻车是道歉，他翻车是连你一起人肉」"
+                badge: "缘分解锁",
+                icon: "🛡️",
+                title: "你和 清清 最有缘",
+                subtitle: "对抗路之王，孤胆英雄",
+                stars: "⭐⭐⭐",
+                ratingDesc: "默契指数：三颗星——因为你们都是独来独往的性格",
+                description: "你和他般配，是因为你们都享受孤独。他在对抗路一个人扛住压力，你也在生活中习惯一个人扛。\n\n你们在一起不需要太多甜言蜜语，一个眼神就够了——"我在，别怕"。",
+                quote: "「一个人也要是一条战线」"
             },
             '5': {
-                badge: "命运解锁",
-                icon: "📊",
-                title: "你的真命天子：陶喆",
-                subtitle: "恋爱体验：全程PPT记录",
-                stars: "⭐⭐⭐",
-                ratingDesc: "适配指数：三颗星——多一颗给创意",
-                description: "你的男人出轨都出得这么有仪式感——自带PPT道歉，图文并茂，逻辑清晰，甚至还有批注。\n\n如果你和他在一起，建议每次吵架都让他做PPT汇报，顺便学学他的时间管理：毕竟能同时\"一次出轨\"和\"二次出轨\"的人，不是谁都能做到的。",
-                quote: "「别人道歉是念稿，他道歉是路演」"
+                badge: "缘分解锁",
+                icon: "🧠",
+                title: "你和 久哲 最有缘",
+                subtitle: "最强大脑，战术大师",
+                stars: "⭐⭐⭐⭐⭐",
+                ratingDesc: "默契指数：五颗星——因为你总是被聪明人吸引",
+                description: "你和他之间的缘分在于——你崇拜有脑子的人。他不靠操作吃饭，靠的是超越常人的战术嗅觉和决策能力。\n\n和他在一起，你永远不会觉得"没意思"，因为他的脑回路总能给你惊喜。不过要做好心理准备：吵架的时候你可能吵不过他。",
+                quote: "「这不是莽，这叫计算好的冒险」"
             },
             '6': {
-                badge: "命运解锁",
-                icon: "🎹",
-                title: "你的真命天子：李云迪",
-                subtitle: "恋爱体验：弹的是法律的弦",
-                stars: "⭐⭐",
-                ratingDesc: "适配指数：两颗星——因为他的音乐会门票可能随时取消",
-                description: "你的男人曾经用这双手弹奏肖邦，现在用这双手弹的是法律的弦。朝阳群众的举报让他从舞台中央跌落，但他还在海外巡演试图东山再起。\n\n和他在一起，你要准备好：听他弹琴的时候，顺便听听有没有警笛声。",
-                quote: "「弹钢琴的手，最后弹的是法律的弦」"
+                badge: "缘分解锁",
+                icon: "❤️",
+                title: "你和 无畏 最有缘",
+                subtitle: "温柔的人，最有力量的射手",
+                stars: "⭐⭐⭐⭐",
+                ratingDesc: "默契指数：四颗星——因为你值得被温柔对待",
+                description: "你们之间的缘分在于——他让你相信温柔也可以很强大。他是赛场上最暖的存在，就像你生活中最想遇到的那种人：不声不响，但永远在你需要的时候出现。\n\n和他在一起，安全感拉满。",
+                quote: "「我不是不说话，我只是在想你」"
             },
             '7': {
-                badge: "命运解锁",
-                icon: "📚",
-                title: "你的真命天子：张凌赫",
-                subtitle: "一句话送你下地狱",
-                stars: "⭐⭐",
-                ratingDesc: "适配指数：两颗星——多一颗给颜值",
-                description: "你们般配的地方是——你足够包容他的情商盆地。别人骂他的时候，你只会说\"他只是嘴笨\"。\n\n但姐妹提醒你：恋爱可以，上综艺别让他开口。",
-                quote: "「好看的皮囊千篇一律，不会说话的灵魂万里挑一」"
+                badge: "缘分解锁",
+                icon: "🐺",
+                title: "你和 Fly 最有缘",
+                subtitle: "狼队精神图腾，永不倒下的战士",
+                stars: "⭐⭐⭐⭐⭐",
+                ratingDesc: "默契指数：五颗星——因为你们都是越挫越勇的人",
+                description: "你和他之间的缘分在于——你们都是那种"打不死"的类型。从Hero到狼队，他经历了很多，但从来没有人见过他放弃。你也一样，生活给你多少巴掌，你都笑着站起来。\n\n你们在一起，就是最强的战线。",
+                quote: "「我不是不累，我只是不想让你们看到」"
             },
             '8': {
-                badge: "命运解锁",
-                icon: "👑",
-                title: "你的真命天子：鹿晗",
-                subtitle: "从顶流之巅到风口浪尖",
+                badge: "缘分解锁",
+                icon: "☀️",
+                title: "你和 暖阳 最有缘",
+                subtitle: "暖阳照进峡谷，也照进你心里",
                 stars: "⭐⭐⭐⭐",
-                ratingDesc: "适配指数：四颗星——多一颗给公开的勇气",
-                description: "你和他般配，是因为你也有\"流量思维\"——红的时候全世界爱你，塌的时候你还在。你不在乎他有没有代言、有没有作品，你在乎的是：当年官宣的时候，他至少没藏着。\n\n这种\"公开的勇气\"，就是你想要的。",
-                quote: "「在全员塌房的年代，敢公开就是最大的浪漫」"
+                ratingDesc: "默契指数：四颗星——因为你们都温暖且低调",
+                description: "你和他之间的缘分在于——你们都是那种安静但闪光的类型。他不争不抢但实力在线，你也从不炫耀但内心强大。\n\n你们在一起就像一场温水煮青蛙——不知不觉中，他就成了你最重要的人。",
+                quote: "「不用多说，打给你看」"
             },
             '9': {
-                badge: "命运解锁",
-                icon: "🤫",
-                title: "你的真命天子：田栩宁",
-                subtitle: "沉默是今晚的康桥",
-                stars: "⭐⭐",
-                ratingDesc: "适配指数：两颗星——一颗给颜值，一颗给沉默的勇气",
-                description: "你爱上的是他的安静，他翻车也是因为太安静。当全网等着他解释的时候，他选择了沉默。而你觉得：沉默就是最好的回应。\n\n姐妹，你这是\"哑巴滤镜\"十级患者。",
-                quote: "「沉默是金，但有时候沉默是罚单」"
+                badge: "缘分解锁",
+                icon: "🔪",
+                title: "你和 妖刀 最有缘",
+                subtitle: "刀锋所指，所向披靡",
+                stars: "⭐⭐⭐",
+                ratingDesc: "默契指数：三颗星——因为你们都太锋芒毕露",
+                description: "你和他之间的缘分在于——你们都是"有态度"的人。他的操作犀利且充满侵略性，你也是那种敢爱敢恨、说话直来直去的性格。\n\n你们在一起，注定不平凡。但也容易吵起来——因为两个有态度的人，谁都不愿意先低头。",
+                quote: "「我的刀，只给值得的人」"
             },
             '10': {
-                badge: "命运解锁",
-                icon: "💕",
-                title: "你的真命天子：赖冠霖",
-                subtitle: "为爱放弃一切的男人",
+                badge: "缘分解锁",
+                icon: "🌿",
+                title: "你和 子阳 最有缘",
+                subtitle: "最好的辅助，永远在你身后",
                 stars: "⭐⭐⭐⭐",
-                ratingDesc: "适配指数：四颗星——给他的真心",
-                description: "你和他般配，是因为你也想被\"偏爱到放弃一切\"。他为了谈恋爱退圈，你觉得这是浪漫；他说\"太红了没法谈\"，你觉得这是真诚。\n\n建议你们一起去没人认识的地方，好好过日子。",
-                quote: "「别人退圈是被动的，他退圈是主动的——为爱」"
+                ratingDesc: "默契指数：四颗星——因为你值得被守护",
+                description: "你和他之间的缘分在于——你骨子里渴望被偏爱。他是那种默默在身后保护你的人，不会说漂亮话，但每一次你需要的时候，他都在。\n\n和他在一起，你永远不是一个人在战斗。他是你的辅助，也是你最强的后盾。",
+                quote: "「你负责C，我负责活」"
             },
             'K': {
-                badge: "🎁 隐藏款解锁 司晓迪 🎁",
-                icon: "📱",
-                title: "爆料体质",
-                subtitle: "你不是来谈恋爱的，你是来爆料的",
-                stars: "📱",
-                ratingDesc: "适配指数：给你一个手机，用来维护正义",
-                description: "恭喜你！你抽中了\"幕后玩家\"隐藏款。从顶流到塌房明星，你爱的不是他们，是你手机里的聊天记录。\n\n你的使命是：爱过，截图过，然后爆过。建议你提前准备好流量账号，因为你的下一站，是直播间。",
-                quote: "「你的爱情，是一场全民吃瓜」"
+                badge: "🎁 隐藏款解锁 🎁",
+                icon: "🎙️",
+                title: "赛评体质",
+                subtitle: "你不是来打游戏的，你是来当解说的",
+                stars: "🎙️",
+                ratingDesc: "默契指数：给你一个话筒，KPL解说席见",
+                description: "恭喜你！你抽中了"幕后大佬"隐藏款。你的天赋不在操作上，而在嘴上——别人打游戏靠手，你打游戏靠嘴。\n\n每一场比赛你都能精准点评，每一个失误你都看得一清二楚。建议你投简历给KPL官方解说团队，你的下一站，是解说席。",
+                quote: "「你的KPI不是段位，是弹幕数量」"
             },
             'L': {
-                badge: "🌟 真·彩蛋款 朝阳群众 🌟",
-                icon: "👮",
-                title: "朝阳群众",
-                subtitle: "你不是来谈恋爱的，你是来举报的",
-                stars: "👮",
-                ratingDesc: "适配指数：给你一个警徽，代表正义",
-                description: "恭喜你抽中\"朝阳群众\"限定款！你的真爱不是某个男明星，而是维护社会治安的使命感。\n\n别人谈恋爱是心动，你谈恋爱是行动——动动手指就举报。建议你常驻朝阳区，因为那里总有新的素材。",
-                quote: "「在你眼里，所有约会都不如举报来得有成就感」"
+                badge: "🌟 真·彩蛋款 🌟",
+                icon: "💼",
+                title: "俱乐部老板",
+                subtitle: "你不是来打比赛的，你是来买队的",
+                stars: "💼",
+                ratingDesc: "默契指数：给你一张银行卡，冠军买给你",
+                description: "恭喜你抽中"终极boss"限定款！你和KPL的关系不是选手和粉丝，而是老板和员工。\n\n别人追星买周边，你追星直接买俱乐部。你对阵容的理解比教练还深，对选手的期望比亲妈还高。建议你先看看银行卡余额，因为养一个冠军战队，不便宜。",
+                quote: "「别人研究BP，你研究工资单」"
             }
         };
 
@@ -1001,7 +993,7 @@
         function animateAnalyzing() {
             const fill = document.getElementById('analyzing-fill');
             let progress = 0;
-            const texts = ['正在分析你的选择...', '正在匹配命运数据库...', '正在计算缘分值...', '正在生成专属结果...'];
+            const texts = ['正在分析你的峡谷选择...', '正在匹配KPL选手数据库...', '正在计算羁绊值...', '正在生成专属缘分...'];
             const textEl = document.querySelector('.analyzing-text');
             let textIndex = 0;
 
@@ -1030,15 +1022,15 @@
         }
 
         function calculateResult() {
-            // K: hidden - specific camera/photo obsessed pattern
-            const cameraRelated = [0, 1, 1, 0, 0, 1, 0, 0, 0, 0];
-            const exposeScore = answers.reduce((acc, a, i) => acc + cameraRelated[i], 0);
-            if (exposeScore >= 5) return 'K';
+            // K: hidden - chose "analysis/critique" style options frequently (option B in Q7=1)
+            const critiquePattern = [0, 2, 0, 0, 0, 0, 1, 0, 0, 0];
+            const critiqueScore = answers.reduce((acc, a, i) => acc + (a === critiquePattern[i] ? 1 : 0), 0);
+            if (critiqueScore >= 4) return 'K';
 
-            // L: hidden - justice/report oriented pattern
-            const reportRelated = [0, 0, 0, 1, 1, 0, 0, 0, 0, 1];
-            const reportScore = answers.reduce((acc, a, i) => acc + reportRelated[i], 0);
-            if (reportScore >= 4) return 'L';
+            // L: hidden - chose "leadership/boss" style options
+            const bossPattern = [0, 2, 2, 1, 2, 0, 0, 0, 0, 3];
+            const bossScore = answers.reduce((acc, a, i) => acc + (a === bossPattern[i] ? 1 : 0), 0);
+            if (bossScore >= 4) return 'L';
 
             // Normal: pick highest score
             const max = Math.max(...scores);
@@ -1053,11 +1045,19 @@
             document.getElementById('result-badge').textContent = result.badge;
             document.getElementById('result-icon').textContent = result.icon;
             document.getElementById('result-title').textContent = result.title;
-            document.getElementById('result-subtitle').textContent = result.subtitle || '';
             document.getElementById('result-stars').textContent = result.stars;
             document.getElementById('result-desc').textContent = result.description;
             document.getElementById('result-quote').textContent = result.quote;
             document.getElementById('result-rating').querySelector('.result-rating-label').textContent = result.ratingDesc;
+
+            let subtitleEl = document.getElementById('result-subtitle');
+            if (!subtitleEl) {
+                subtitleEl = document.createElement('div');
+                subtitleEl.id = 'result-subtitle';
+                subtitleEl.style.cssText = 'font-size:0.85rem;color:var(--gold);margin-bottom:1.5rem;letter-spacing:0.05em;';
+                document.getElementById('result-title').after(subtitleEl);
+            }
+            subtitleEl.textContent = result.subtitle || '';
 
             showPage('result-page');
         }
@@ -1072,16 +1072,16 @@
 
             if (navigator.share) {
                 navigator.share({
-                    title: '测测你和哪位男明星最般配',
-                    text: `我测出来是「${icon} ${title}」，你呢？懂的都懂 👀`,
+                    title: '测测你和哪位KPL选手最有缘',
+                    text: `我测出来是「${icon} ${title}」，你呢？峡谷见 🎮`,
                     url: window.location.href
                 }).catch(() => {});
             } else {
-                const text = `我测出来是「${icon} ${title}」，你呢？懂的都懂 👀`;
+                const text = `我测出来是「${icon} ${title}」，你呢？峡谷见 🎮`;
                 navigator.clipboard.writeText(text).then(() => {
-                    showToast('结果已复制，快去分享给闺蜜吧 ✨');
+                    showToast('结果已复制，快去分享给队友吧 ✨');
                 }).catch(() => {
-                    showToast('长按复制链接分享给闺蜜');
+                    showToast('长按复制链接分享给队友');
                 });
             }
         }
